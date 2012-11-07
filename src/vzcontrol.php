@@ -90,18 +90,18 @@ $function_mapping = array(
     ),
     'reboot'=>array(
         'func'=>'reboot_host',
-        'usage'=>'HOST',
-        'desc'=>'Reboot HOST'
+        'usage'=>'server1 [server2] [etc]',
+        'desc'=>'Reboot OpenVZ Host(s)'
     ),
     'shutdown'=>array(
         'func'=>'shutdown_host',
-        'usage'=>'HOST',
-        'desc'=>'Shutdown HOST'
+        'usage'=>'server1 [server2] [etc]',
+        'desc'=>'Shutdown OpenVZ Host(s)'
     ),
     'uptime'=>array(
         'func'=>'uptime',
         'usage'=>'[server1] [server2] [etc]',
-        'desc'=>'Get uptime for servers'
+        'desc'=>'Get uptime for OpenVZ Host(s)'
     ),
     'clear'=>array(
         'func'=>'clear_screen',

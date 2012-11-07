@@ -307,31 +307,54 @@ function download_template($args){
 function shutdown_host($args){
     global $servers;
     global $reader;
-    if(!isset($servers[$args])){
-        putLine($args.' is not known');
+
+    if(strlen($args)){
+        $servers_wanted = explode(' ',$args);
+        foreach($servers_wanted as $server_name){
+            if(!isset($servers[$server_name])){
+                putLine($server_name.' is not known');
+                return false;
+            }
+        }
+    }
+    else{
         return false;
     }
 
-    $confirm = $reader->readLine('Are you sure you want to shutdown '.$args.'? (y/N)');
-    if(in_array(trim($confirm), array('y','Y'))){
-        runSSH($args,'shutdown -h now');
+    foreach($servers_wanted as $server_name){
+        putLine('Shutting down '.$server_name);
+        putLine('-------------'.str_repeat('-', strlen($server_name)));
+        runSSH($server_name,'shutdown -h now');
+        putLine('');
     }
+
     return true;
 }
 
 function reboot_host($args){
     global $servers;
     global $reader;
-    if(!isset($servers[$args])){
-        putLine($args.' is not known');
+
+    if(strlen($args)){
+        $servers_wanted = explode(' ',$args);
+        foreach($servers_wanted as $server_name){
+            if(!isset($servers[$server_name])){
+                putLine($server_name.' is not known');
+                return false;
+            }
+        }
+    }
+    else{
         return false;
     }
 
-    $confirm = $reader->readLine('Are you sure you want to reboot '.$args.'? (y/N)');
-
-    if(in_array(trim($confirm), array('y','Y'))){
-        runSSH($args,'reboot');
+    foreach($servers_wanted as $server_name){
+        putLine('Shutting down '.$server_name);
+        putLine('-------------'.str_repeat('-', strlen($server_name)));
+        runSSH($server_name,'reboot');
+        putLine('');
     }
+    
     return true;
 }
 
