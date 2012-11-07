@@ -336,8 +336,6 @@ function help($args){
     else{
         foreach($function_mapping as $command=>$info){
             putLine($command.' '.$info['usage']);
-            putLine("\t".$info['desc']);
-            putLine('');
         }
     }
     return true;
