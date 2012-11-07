@@ -268,7 +268,6 @@ function download_template($args){
 
     putLine('Downloading requested template');
     runSSH($host,'wget http://'.$url.'/'.$folder.'/'.$template.'.tar.gz -O /vz/template/cache/'.$template.'.tar.gz --progress=bar:force');
-    putLine('Template will show in list when complete');
 
     return true;
 }

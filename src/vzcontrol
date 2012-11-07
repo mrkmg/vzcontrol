@@ -46,6 +46,11 @@ $function_mapping = array(
         'usage'=>'[section]',
         'desc'=>'List avaliable template for download'
     ),
+    'install'=>array(
+        'func'=>'download_template',
+        'usage'=>'HOST TEMPLATE [section]',
+        'desc'=>'Install TEMPLATE from [section] on HOST'
+    ),
     'mv'=>array(
         'func'=>'move_container',
         'usage'=>'CTID CURRENTHOST DESTHOST',

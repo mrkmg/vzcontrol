@@ -39,6 +39,9 @@ Here is a list of all commands
     lsot [section]
         List avaliable template for download
 
+    install HOST TEMPLATE [section]
+        Install TEMPLATE from [section] on HOST
+
     mv CTID CURRENTHOST DESTHOST
         Perform an offline migration of containter CTID on CURRENTHOST to DESTHOST
 
