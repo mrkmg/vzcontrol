@@ -241,6 +241,32 @@ function list_templates($args){
     return true;
 }
 
+function uptime($args){
+    global $servers;
+
+    if(strlen($args)){
+        $servers_wanted = explode(' ',$args);
+        foreach($servers_wanted as $server_name){
+            if(!isset($servers[$server_name])){
+                putLine($server_name.' is not known');
+                return false;
+            }
+        }
+    }
+    else{
+        $servers_wanted = array_keys($servers);
+    }
+
+    foreach($servers_wanted as $server_name){
+        putLine('Uptime for '.$server_name);
+        putLine('-----------'.str_repeat('-', strlen($server_name)));
+        runSSH($server_name,'uptime');
+        putLine('');
+    }
+
+    return true;
+}
+
 function list_online_templates($args){
     $url = 'download.openvz.org';
     $folder = 'template/precreated/';

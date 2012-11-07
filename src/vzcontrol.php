@@ -98,6 +98,11 @@ $function_mapping = array(
         'usage'=>'HOST',
         'desc'=>'Shutdown HOST'
     ),
+    'uptime'=>array(
+        'func'=>'uptime',
+        'usage'=>'[server1] [server2] [etc]',
+        'desc'=>'Get uptime for servers'
+    ),
     'clear'=>array(
         'func'=>'clear_screen',
         'usage'=>'',
