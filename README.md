@@ -10,13 +10,9 @@ Installation / Building
 
 1. Clone the repo `git clone https://github.com/mrkmg/vzcontrol.git`
 2. Enter Dir `cd vzcontrol`
-3. Build `./build`
-
-Configuration
--------------
-
-1. Make sure the root account on all OpenVZ hosts have their ssh keys shared among each other. For a smoother experience in vzcontrol, you should share your accounts ssh key with all the OpenVZ hosts as well.
-2. Modify `out/config.php`. Follow instructions in that file
+3. Edit config/config.php and add all your OpenVZ Hosts
+4. Build `./build`
+5. (Optional) Symlink this output to /usr/bin
 
 Usage
 -----

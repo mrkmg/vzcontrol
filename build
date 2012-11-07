@@ -11,7 +11,7 @@ if [ ! -d $OUTPUTDIR ]; then
 fi
 
 echo 'Combining src and lib'
-echo '!#/usr/bin/php' > $OUTPUTDIR/$OUTPUTNAME
+echo '#!/usr/bin/php' > $OUTPUTDIR/$OUTPUTNAME
 cat ./conf/config.php ./src/vzcontrol.php ./lib/library.php ./src/functions.php | sed '/\/\/_REMOVE_START/,/\/\/_REMOVE_END/d' >> $OUTPUTDIR/$OUTPUTNAME
 chmod +x ./out/vzcontrol
 echo 'Complete'
