@@ -310,7 +310,7 @@ function reboot_host($args){
 }
 
 function raw($args){
-    $args = explode(' ',$args);
+    $args = explode(' ',$args,2);
     $host = $args[0];
     $command = $args[1];
     runSSH($host,$command);

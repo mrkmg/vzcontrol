@@ -12,14 +12,15 @@ Installation / Building
 2. Enter Dir `cd vzcontrol`
 3. Edit config/config.php and add all your OpenVZ Hosts
 4. Build `./build`
-5. (Optional) Symlink this output to /usr/bin
+5. (Optional) Symlink the script to PATH eg. `sudo ln ./out/vzcontrol /usr/bin/vzcontrol`
 
 Usage
 -----
 
 After you have built and configured vzcontrol, you can launch it from the out directory.
 
-    ./vzcontrol
+    If you did symlink the script: `vzcontrol`
+    If you did not symlink: `./vzcontrol`
 
 Here is a list of all commands
 
