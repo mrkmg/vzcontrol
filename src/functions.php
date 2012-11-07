@@ -180,8 +180,8 @@ function create_container($args){
     $pReader = new Password;
     $tries = 0;
     do{
-        $rootPassword = $pReader->readLine('Root Password? ');
-        $confirmPassword = $pReader->readLine('Confirm? ');
+        $rootPassword    =  $pReader->readLine('Root Password? ');
+        $confirmPassword =  $pReader->readLine('Confirm? ');
         $tries++;
     }while($tries <= 3 and !((!empty($rootPassword) and $rootPassword == $confirmPassword) or !putLine('Passwords did not match')));
     if($tries > 3){
@@ -328,7 +328,7 @@ function shutdown_host($args){
         return false;
     }
 
-    $confirm = $reader->readLine('Are you sure you want to shutdown '.$host.'? (y/N) ');
+    $confirm = $reader->readLine('Are you sure you want to shutdown '.$args.'? (y/N) ');
     if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
         return true;
     }
@@ -360,7 +360,7 @@ function reboot_host($args){
         return false;
     }
 
-    $confirm = $reader->readLine('Are you sure you want to reboot '.$host.'? (y/N) ');
+    $confirm = $reader->readLine('Are you sure you want to reboot '.$args.'? (y/N) ');
     if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
         return true;
     }
