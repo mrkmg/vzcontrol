@@ -349,8 +349,8 @@ function reboot_host($args){
     }
 
     foreach($servers_wanted as $server_name){
-        putLine('Shutting down '.$server_name);
-        putLine('-------------'.str_repeat('-', strlen($server_name)));
+        putLine('Rebooting '.$server_name);
+        putLine('----------'.str_repeat('-', strlen($server_name)));
         runSSH($server_name,'reboot');
         putLine('');
     }
@@ -377,6 +377,13 @@ function help($args){
             putLine($command.' '.$info['usage']);
             putLine("\t".$info['desc']);
             putLine('');
+        }
+        elseif($args == 'all'){
+            foreach($function_mapping as $command=>$info){
+                putLine($command.' '.$info['usage']);
+                putLine("\t".$info['desc']);
+                putLine('');
+            }
         }
         else{
             putLine('Help for command not found');
