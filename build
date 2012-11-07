@@ -1,13 +1,17 @@
 #!/bin/bash
 
+OUTPUTDIR=out
+OUTPUTNAME=vzcontrol
+
 echo 'Building vzcontrol'
 
-if [ ! -d "./out" ]; then
+if [ ! -d $OUTPUTDIR ]; then
     echo 'Making output directory'
-    mkdir ./out
-    cp ./conf/config.php ./out/config.php
+    mkdir $OUTPUTDIR
 fi
+
 echo 'Combining src and lib'
-cat ./src/vzcontrol ./lib/library.php ./src/functions.php | sed '/\/\/_REMOVE_START/,/\/\/_REMOVE_END/d' > ./out/vzcontrol
+echo '!#/usr/bin/php' > $OUTPUTDIR/$OUTPUTNAME
+cat ./conf/config.php ./src/vzcontrol.php ./lib/library.php ./src/functions.php | sed '/\/\/_REMOVE_START/,/\/\/_REMOVE_END/d' >> $OUTPUTDIR/$OUTPUTNAME
 chmod +x ./out/vzcontrol
 echo 'Complete'

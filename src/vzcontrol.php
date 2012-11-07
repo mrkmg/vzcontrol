@@ -1,7 +1,4 @@
-#!/usr/bin/php -q
 <?php
-$servers = require('config.php');
-
 /**
  * 
  * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>

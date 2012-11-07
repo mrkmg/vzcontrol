@@ -28,7 +28,7 @@
  *
  */
 
-return array(
+$servers = array(
     'NAME1'=>array(
         'host'=>'HOSTNAME'
     ),
@@ -37,3 +37,4 @@ return array(
         'port'=>'2222'
     )
 );
+?>
