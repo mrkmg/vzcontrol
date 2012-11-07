@@ -201,6 +201,7 @@ function create_container($args){
 
 function destroy_container($args){
     global $servers;
+    global $reader;
     $args = explode(' ',$args);
     $host = $args[0];
     $ctid = $args[1];
@@ -208,6 +209,12 @@ function destroy_container($args){
     if(!isset($servers[$host])){
         putLine($host.' is not known');
         return false;
+    }
+
+
+    $confirm = $reader->readLine('Are you sure you want to destroy '.$ctid.'? (y/N) ');
+    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
+        return true;
     }
 
     runSSH($host,'vzctl destroy '.$ctid);
@@ -321,6 +328,11 @@ function shutdown_host($args){
         return false;
     }
 
+    $confirm = $reader->readLine('Are you sure you want to shutdown '.$host.'? (y/N) ');
+    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
+        return true;
+    }
+
     foreach($servers_wanted as $server_name){
         putLine('Shutting down '.$server_name);
         putLine('-------------'.str_repeat('-', strlen($server_name)));
@@ -346,6 +358,11 @@ function reboot_host($args){
     }
     else{
         return false;
+    }
+
+    $confirm = $reader->readLine('Are you sure you want to reboot '.$host.'? (y/N) ');
+    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
+        return true;
     }
 
     foreach($servers_wanted as $server_name){
