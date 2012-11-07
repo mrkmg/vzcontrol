@@ -66,6 +66,12 @@ Here is a list of all commands
     rm HOST CTID
         Destroy containter CTID on HOST
 
+    reboot HOST
+        Reboot HOST
+
+    shutdown HOST
+        Shutdown HOST
+
     clear 
         clears all output on screen
 
