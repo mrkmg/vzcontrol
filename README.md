@@ -7,7 +7,12 @@ Installation / Building
 *Requirements*
 - PHP5
 - SSH
+- For each OpenVZ Host you plan on controlling, ssh keys for the root account must be shared
 
+*Optional*
+- Share the ssh key from the computer you are running vzcontrol on with all OpenVZ Hosts
+
+*Steps*
 1. Clone the repo `git clone https://github.com/mrkmg/vzcontrol.git`
 2. Enter Dir `cd vzcontrol`
 3. Edit config/config.php and add all your OpenVZ Hosts
@@ -63,11 +68,14 @@ Here is a list of all commands
     rm HOST CTID
         Destroy containter CTID on HOST
 
-    reboot HOST
-        Reboot HOST
+    reboot server1 [server2] [etc]
+        Reboot OpenVZ Host(s)
 
-    shutdown HOST
-        Shutdown HOST
+    shutdown server1 [server2] [etc]
+        Shutdown OpenVZ Host(s)
+
+    uptime [server1] [server2] [etc]
+        Get uptime for OpenVZ Host(s)
 
     clear 
         clears all output on screen
