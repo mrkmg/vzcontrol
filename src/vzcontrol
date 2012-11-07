@@ -91,6 +91,16 @@ $function_mapping = array(
         'usage'=>'HOST CTID',
         'desc'=>'Destroy containter CTID on HOST'
     ),
+    'reboot'=>array(
+        'func'=>'reboot_host',
+        'usage'=>'HOST',
+        'desc'=>'Reboot HOST'
+    ),
+    'shutdown'=>array(
+        'func'=>'shutdown_host',
+        'usage'=>'HOST',
+        'desc'=>'Shutdown HOST'
+    ),
     'clear'=>array(
         'func'=>'clear_screen',
         'usage'=>'',

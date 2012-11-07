@@ -31,10 +31,14 @@ function putLine($line){
 
 function runSSH($server_name,$command){
     global $servers;
-    $command = 'ssh root@'.$servers[$server_name]['host'].' "'.str_replace('"','\\"',$command).'"';
+    $command = 'ssh'
+             . (isset($servers[$server_name]['port'])?' -p '.$servers[$server_name]['port']:'')
+             . ' -o ConnectTimeout=2 root@'
+             . $servers[$server_name]['host']
+             . ' "'.str_replace('"','\\"',$command).'"';
     //putLine($command);
-    passthru($command);
-    return true;
+    passthru($command,$return);
+    return !$return;
 }
 
 function list_servers($args,$all=false){
@@ -55,7 +59,9 @@ function list_servers($args,$all=false){
 
     foreach($servers_wanted as $server_name){
         putLine('Listing for '.$server_name);
-        runSSH($server_name,'vzlist'.($all?' -a':''));
+        if(!runSSH($server_name,'vzlist'.($all?' -a':''))){
+            putLine($server_name.' is not online');
+        }
     }
     return true;
 }
@@ -269,6 +275,37 @@ function download_template($args){
     putLine('Downloading requested template');
     runSSH($host,'wget http://'.$url.'/'.$folder.'/'.$template.'.tar.gz -O /vz/template/cache/'.$template.'.tar.gz --progress=bar:force');
 
+    return true;
+}
+
+function shutdown_host($args){
+    global $servers;
+    global $reader;
+    if(!isset($servers[$args])){
+        putLine($args.' is not known');
+        return false;
+    }
+
+    $confirm = $reader->readLine('Are you sure you want to shutdown '.$args.'? (y/N)');
+    if(in_array(trim($confirm), array('y','Y'))){
+        runSSH($args,'shutdown -h now');
+    }
+    return true;
+}
+
+function reboot_host($args){
+    global $servers;
+    global $reader;
+    if(!isset($servers[$args])){
+        putLine($args.' is not known');
+        return false;
+    }
+
+    $confirm = $reader->readLine('Are you sure you want to reboot '.$args.'? (y/N)');
+
+    if(in_array(trim($confirm), array('y','Y'))){
+        runSSH($args,'reboot');
+    }
     return true;
 }
 

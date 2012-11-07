@@ -33,6 +33,7 @@ return array(
         'host'=>'HOSTNAME'
     ),
     'NAME2'=>array(
-        'host'=>'1.2.3.4'
+        'host'=>'1.2.3.4',
+        'port'=>'2222'
     )
 );
