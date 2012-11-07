@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! -d "./out" ]; then
+    mkdir ./out
+    cp ./conf/config.php ./out/config.php
+fi
+
+cat ./src/vzcontrol ./lib/library.php ./src/functions.php | sed '/\/\/_REMOVE_START/,/\/\/_REMOVE_END/d' > ./out/vzcontrol
+chmod +x ./out/vzcontrol
