@@ -335,7 +335,7 @@ function shutdown_host($args){
 
     foreach($servers_wanted as $server_name){
         putLine('Shutting down '.$server_name);
-        putLine('-------------'.str_repeat('-', strlen($server_name)));
+        putLine('--------------'.str_repeat('-', strlen($server_name)));
         runSSH($server_name,'shutdown -h now');
         putLine('');
     }
