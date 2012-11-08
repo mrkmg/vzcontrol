@@ -72,7 +72,7 @@ function getCtidFor($server_name){
 
     $ctid_raw = returnSSH($server_name,'vzlist -a -H -1');
     $ctids = explode("\n",$ctid_raw);
-    array_walk($ctids,'trim');
+    array_walk($ctids,function(&$i){ return $i = trim($i); });
     print_r($ctids);
     die();
 }
