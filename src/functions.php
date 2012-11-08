@@ -43,19 +43,8 @@ function runSSH($server_name,$command){
 
 function list_servers($args,$all=false){
     global $servers;
-
-    if(strlen($args)){
-        $servers_wanted = explode(' ',$args);
-        foreach($servers_wanted as $server_name){
-            if(!isset($servers[$server_name])){
-                putLine($server_name.' is not known');
-                return false;
-            }
-        }
-    }
-    else{
-        $servers_wanted = array_keys($servers);
-    }
+    
+    $servers_wanted = get_wanted_servers($args);
 
     foreach($servers_wanted as $server_name){
         putLine('Listing for '.$server_name);
@@ -224,19 +213,8 @@ function destroy_container($args){
 
 function list_templates($args){
     global $servers;
-
-    if(strlen($args)){
-        $servers_wanted = explode(' ',$args);
-        foreach($servers_wanted as $server_name){
-            if(!isset($servers[$server_name])){
-                putLine($server_name.' is not known');
-                return false;
-            }
-        }
-    }
-    else{
-        $servers_wanted = array_keys($servers);
-    }
+    
+    $servers_wanted = get_wanted_servers($args);
 
     foreach($servers_wanted as $server_name){
         putLine('Listing Templates for '.$server_name);
@@ -251,6 +229,20 @@ function list_templates($args){
 function uptime($args){
     global $servers;
 
+    $servers_wanted = get_wanted_servers($args);
+
+    foreach($servers_wanted as $server_name){
+        putLine('Uptime for '.$server_name);
+        putLine('-----------'.str_repeat('-', strlen($server_name)));
+        runSSH($server_name,'uptime');
+        putLine('');
+    }
+
+    return true;
+}
+
+function get_wanted_servers($args){
+    global $servers;
     if(strlen($args)){
         $servers_wanted = explode(' ',$args);
         foreach($servers_wanted as $server_name){
@@ -263,15 +255,7 @@ function uptime($args){
     else{
         $servers_wanted = array_keys($servers);
     }
-
-    foreach($servers_wanted as $server_name){
-        putLine('Uptime for '.$server_name);
-        putLine('-----------'.str_repeat('-', strlen($server_name)));
-        runSSH($server_name,'uptime');
-        putLine('');
-    }
-
-    return true;
+    return $servers_wanted;
 }
 
 function list_online_templates($args){
