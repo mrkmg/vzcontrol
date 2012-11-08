@@ -846,14 +846,24 @@ class Readline {
         $current = $this->getLine();
         $len = strlen($current);
         $matches = array();
+        $match_array = array();
         foreach($this->_autocomplete as $item)
         {
-            if(substr($item,0,$len) == $current) $matches[]=$item;
+            if(substr($item,0,$len) == $current)
+            {
+                $matches[]=$item;
+                $item_length = strlen($item);
+                for($i=0;$i<$item_length;$i++){
+                    if(!count($match_array)) $match_array = str_split($item);
+                    else $match_array = array_intersect_assoc($match_array, str_split($item));
+                }
+            }   
         }
         $count = count($matches);
         if($count > 1){
             $this->_write(PHP_EOL.implode(' ',$matches).PHP_EOL);
             $self->_write("\r\033[K" . $self->getPrefix());
+            $current = implode('',$match_array);
             $self->setBuffer($buffer = $current);
             $self->setLine($buffer);
             return static::STATE_CONTINUE;
