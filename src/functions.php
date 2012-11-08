@@ -105,7 +105,7 @@ function returnSSH($server_name,$command){
              . ' -o ConnectTimeout=2 root@'
              . $servers[$server_name]['host']
              . ' "'.str_replace('"','\\"',$command).'"';
-    $output = shell_exec($command,$return);
+    $output = shell_exec($command);
     return $output;
 }
 
