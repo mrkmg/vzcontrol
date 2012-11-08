@@ -29,6 +29,12 @@ function putLine($line){
     return true;
 }
 
+function putHeader($header){
+    putLine($header);
+    putLine(str_repeat('-', strlen($header)));
+    return true;
+}
+
 function runSSH($server_name,$command){
     global $servers;
     global $reader;
@@ -50,7 +56,7 @@ function list_servers($args,$all=false){
     $servers_wanted = get_wanted_servers($args);
 
     foreach($servers_wanted as $server_name){
-        putLine('Listing for '.$server_name);
+        putHeader('Listing for '.$server_name);
         if(!runSSH($server_name,'vzlist'.($all?' -a':''))){
             putLine($server_name.' is not online');
         }
@@ -220,8 +226,7 @@ function list_templates($args){
     $servers_wanted = get_wanted_servers($args);
 
     foreach($servers_wanted as $server_name){
-        putLine('Listing Templates for '.$server_name);
-        putLine('----------------------'.str_repeat('-', strlen($server_name)));
+        putHeader('Listing Templates for '.$server_name);
         runSSH($server_name,'ls /vz/template/cache | sed s/.tar.gz//');
         putLine('');
     }
@@ -235,8 +240,7 @@ function uptime($args){
     $servers_wanted = get_wanted_servers($args);
 
     foreach($servers_wanted as $server_name){
-        putLine('Uptime for '.$server_name);
-        putLine('-----------'.str_repeat('-', strlen($server_name)));
+        putHeader('Uptime for '.$server_name);
         runSSH($server_name,'uptime');
         putLine('');
     }
@@ -322,7 +326,6 @@ function shutdown_host($args){
 
     foreach($servers_wanted as $server_name){
         putLine('Shutting down '.$server_name);
-        putLine('--------------'.str_repeat('-', strlen($server_name)));
         runSSH($server_name,'shutdown -h now');
         putLine('');
     }
@@ -354,7 +357,6 @@ function reboot_host($args){
 
     foreach($servers_wanted as $server_name){
         putLine('Rebooting '.$server_name);
-        putLine('----------'.str_repeat('-', strlen($server_name)));
         runSSH($server_name,'reboot');
         putLine('');
     }
