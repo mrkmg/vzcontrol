@@ -1,7 +1,0 @@
-
-[submodule "src/Hoa/Core"]
-	path = src/Hoa/Core
-	url = http://git.hoa-project.net/Library/Core.git
-[submodule "src/Hoa/Console"]
-	path = src/Hoa/Console
-	url = http://git.hoa-project.net/Library/Console.git
