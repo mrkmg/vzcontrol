@@ -34,11 +34,11 @@ function runSSH($server_name,$command){
     global $reader;
     if(!isset($servers[$server_name])) return false;
     $reader->restoreStty();
-    $command = 'ssh'
+    $command = 'ssh -t'
              . (isset($servers[$server_name]['port'])?' -p '.$servers[$server_name]['port']:'')
              . ' -o ConnectTimeout=2 root@'
              . $servers[$server_name]['host']
-             . ' "TERM=xterm; '.str_replace('"','\\"',$command).'"';
+             . ' "'.str_replace('"','\\"',$command).'"';
     //putLine($command);
     passthru($command,$return);
     $reader->setStty();
