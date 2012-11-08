@@ -31,13 +31,17 @@ require('conf/config.php');
 
 
 $reader = new Hoa\Console\Readline\Readline;
+$reader->setAutocomplete(arraY_keys($function_mapping));
 showBanner();
 while(1){
     $line = $reader->readLine('VzControl>');
     $line = explode(' ',$line,2);
     $command = $line[0];
     $args = isset($line[1])?$line[1]:null;
-    if(!isset($function_mapping[$command])){
+    if(strlen($command) == 0){
+        
+    }
+    elseif(!isset($function_mapping[$command])){
         putLine('Command not found');
     }
     else{

@@ -150,6 +150,8 @@ class Readline {
      */
     protected $_prefix         = null;
 
+    private $_autocomplete = array();
+
 
 
     /**
@@ -180,8 +182,13 @@ class Readline {
         $this->_mapping["\177"]   = xcallable($this, '_bindBackspace');
         $this->_mapping["\027"]   = xcallable($this, '_bindControlW');
         $this->_mapping["\n"]     = xcallable($this, '_bindNewline');
+        $this->_mapping["\t"]     = xcallable($this, '_bindTab');
 
         return;
+    }
+
+    public function setAutocomplete($items){
+        $this->_autocomplete = $items;
     }
 
     public function setStty(){
@@ -832,6 +839,35 @@ class Readline {
         $self->addHistory($self->getLine());
 
         return static::STATE_BREAK;
+    }
+
+    public function _bindTab( Readline $self){
+
+        $current = $this->getLine();
+        $len = strlen($current);
+        $matches = array();
+        foreach($this->_autocomplete as $item)
+        {
+            if(substr($item,0,$len) == $current) $matches[]=$item;
+        }
+        $count = count($matches);
+        if($count > 1){
+            $this->_write(PHP_EOL.implode(' ',$matches).PHP_EOL);
+            $self->_write("\r\033[K" . $self->getPrefix());
+            $self->setBuffer($buffer = $current);
+            $self->setLine($buffer);
+            return static::STATE_CONTINUE;
+        }
+        else if($count == 1){
+            $self->_write("\r\033[K" . $self->getPrefix());
+            $self->setBuffer($buffer = $matches[0]);
+            $self->setLine($buffer);
+            return static::STATE_CONTINUE;
+        }
+        else{
+            return static::STATE_CONTINUE;
+        }
+
     }
 
     /**
