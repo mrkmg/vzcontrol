@@ -22,7 +22,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
- 
+
 echo 'Building VzControl'.PHP_EOL;
 $srcRoot = "./src";
 $buildRoot = "./out";
@@ -38,7 +38,7 @@ $phar->setStub($stub);
 rename($buildRoot.'/vzcontrol.phar',$buildRoot.'/vzcontrol');
 chmod($buildRoot.'/vzcontrol',0755);
 
-echo "Build complete.\n"
-    ."To run now\n\t ./out/vzcontrol.\n"
-    ."Link to PATH\n\t sudo ln ./out/vzcontrol /usr/bin/vzcontrol";
+echo "Build complete.".PHP_EOL
+    ."To run now".PHP_EOL."\t ./out/vzcontrol.".PHP_EOL
+    ."Link to PATH".PHP_EOL."\t sudo ln ./out/vzcontrol /usr/bin/vzcontrol".PHP_EOL;
 ?>
