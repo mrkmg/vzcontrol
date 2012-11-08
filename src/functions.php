@@ -369,9 +369,10 @@ function raw($args){
     $command = $args[1];
 
     if(!isset($servers[$host])){
-        putline($host.' is not known.');
+        putLine($host.' is not known');
         return false;
     }
+    
     runSSH($host,$command);
 
     return true;
