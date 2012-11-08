@@ -25,28 +25,28 @@
 $function_mapping = array(
     'ls'=>array(
         'func'=>'list_servers',
-        'usage'=>'[server1] [server2] [etc]',
-        'desc'=>'List running containers on servers'
+        'usage'=>'[HOST] [HOST] ...',
+        'desc'=>'List running containers on OpenVZ Host(s)'
     ),
     'lsa'=>array(
         'func'=>'list_all_servers',
-        'usage'=>'[server1] [server2] [etc]',
-        'desc'=>'List all containers on servers'
+        'usage'=>'[HOST] [HOST] ...',
+        'desc'=>'List all containers on OpenVZ Host(s)'
     ),
     'lst'=>array(
         'func'=>'list_templates',
-        'usage'=>'[server1] [server2] [etc]',
-        'desc'=>'List templates on server'
+        'usage'=>'[HOST] [HOST] ...',
+        'desc'=>'List templates on OpenVZ Host(s)'
     ),
     'lsot'=>array(
         'func'=>'list_online_templates',
-        'usage'=>'[section]',
-        'desc'=>'List avaliable template for download'
+        'usage'=>'[SECTION]',
+        'desc'=>'List avaliable template for download. Sections include beta, old, and contrib'
     ),
     'install'=>array(
         'func'=>'download_template',
-        'usage'=>'HOST TEMPLATE [section]',
-        'desc'=>'Install TEMPLATE from [section] on HOST'
+        'usage'=>'HOST TEMPLATE [SECTION]',
+        'desc'=>'Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib'
     ),
     'mv'=>array(
         'func'=>'move_container',
@@ -90,17 +90,17 @@ $function_mapping = array(
     ),
     'reboot'=>array(
         'func'=>'reboot_host',
-        'usage'=>'server1 [server2] [etc]',
+        'usage'=>'HOST [HOST] ...',
         'desc'=>'Reboot OpenVZ Host(s)'
     ),
     'shutdown'=>array(
         'func'=>'shutdown_host',
-        'usage'=>'server1 [server2] [etc]',
+        'usage'=>'HOST [HOST] ...',
         'desc'=>'Shutdown OpenVZ Host(s)'
     ),
     'uptime'=>array(
         'func'=>'uptime',
-        'usage'=>'[server1] [server2] [etc]',
+        'usage'=>'[HOST] [HOST] ...',
         'desc'=>'Get uptime for OpenVZ Host(s)'
     ),
     'clear'=>array(
@@ -125,7 +125,7 @@ $function_mapping = array(
     ),
     'help'=>array(
         'func'=>'help',
-        'usage'=>'[command]',
+        'usage'=>'[COMMAND]',
         'desc'=>'Show this help page'
     )
 );

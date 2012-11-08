@@ -52,20 +52,20 @@ After you have built and configured vzcontrol, you can launch it from the out di
 
 Here is a list of all commands
 
-    ls [server1] [server2] [etc]
-        List running containers on servers
+    ls [HOST] [HOST] ...
+        List running containers on OpenVZ Host(s)
 
-    lsa [server1] [server2] [etc]
-        List all containers on servers
+    lsa [HOST] [HOST] ...
+        List all containers on OpenVZ Host(s)
 
-    lst [server1] [server2] [etc]
-        List templates on server
+    lst [HOST] [HOST] ...
+        List templates on OpenVZ Host(s)
 
-    lsot [section]
-        List avaliable template for download
+    lsot [SECTION]
+        List avaliable template for download. Sections include beta, old, and contrib
 
-    install HOST TEMPLATE [section]
-        Install TEMPLATE from [section] on HOST
+    install HOST TEMPLATE [SECTION]
+        Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib
 
     mv CTID CURRENTHOST DESTHOST
         Perform an offline migration of containter CTID on CURRENTHOST to DESTHOST
@@ -91,13 +91,13 @@ Here is a list of all commands
     rm HOST CTID
         Destroy containter CTID on HOST
 
-    reboot server1 [server2] [etc]
+    reboot HOST [HOST] ...
         Reboot OpenVZ Host(s)
 
-    shutdown server1 [server2] [etc]
+    shutdown HOST [HOST] ...
         Shutdown OpenVZ Host(s)
 
-    uptime [server1] [server2] [etc]
+    uptime [HOST] [HOST] ...
         Get uptime for OpenVZ Host(s)
 
     clear 
@@ -112,5 +112,5 @@ Here is a list of all commands
     exit 
         Exit/Quit to the program
 
-    help [command]
+    help [COMMAND]
         Show this help page
