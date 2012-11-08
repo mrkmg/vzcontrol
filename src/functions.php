@@ -39,7 +39,6 @@ function runSSH($server_name,$command){
              . ' -o ConnectTimeout=2 root@'
              . $servers[$server_name]['host']
              . ' "'.str_replace('"','\\"',$command).'"';
-    putLine($command);
     passthru($command,$return);
     $reader->setStty();
     return !$return;
@@ -369,7 +368,7 @@ function raw($args){
     $host = $args[0];
     $command = $args[1];
 
-    if(!isset($severs[$host])){
+    if(!isset($servers[$host])){
         putline($host.' is not known.');
         return false;
     }
