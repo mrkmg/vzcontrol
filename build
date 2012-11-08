@@ -1,17 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env php
+<?php
+/**
+ * 
+ * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+ 
+echo 'Building VzControl'.PHP_EOL;
+$srcRoot = "./src";
+$buildRoot = "./out";
+ 
+if(file_exists($buildRoot.'/vzcontrol')) unlink($buildRoot.'/vzcontrol');
 
-OUTPUTDIR=out
-OUTPUTNAME=vzcontrol
+$phar = new Phar($buildRoot . "/vzcontrol.phar", 
+    FilesystemIterator::CURRENT_AS_FILEINFO |       FilesystemIterator::KEY_AS_FILENAME, "vzcontrol.phar");
+$phar->buildFromDirectory($srcRoot);
+$defaultStub = $phar->createDefaultStub("vzcontrol.php");
+$stub = "#!/usr/bin/env php \n".$defaultStub;
+$phar->setStub($stub);
+rename($buildRoot.'/vzcontrol.phar',$buildRoot.'/vzcontrol');
+chmod($buildRoot.'/vzcontrol',0755);
 
-echo 'Building vzcontrol'
-
-if [ ! -d $OUTPUTDIR ]; then
-    echo 'Making output directory'
-    mkdir $OUTPUTDIR
-fi
-
-echo 'Combining src and lib'
-echo '#!/usr/bin/php' > $OUTPUTDIR/$OUTPUTNAME
-cat ./conf/config.php ./src/vzcontrol.php ./lib/library.php ./src/functions.php | sed '/\/\/_REMOVE_START/,/\/\/_REMOVE_END/d' >> $OUTPUTDIR/$OUTPUTNAME
-chmod +x ./out/vzcontrol
-echo 'Complete'
+echo "Build complete.\n"
+    ."To run now\n\t ./out/vzcontrol.\n"
+    ."Link to PATH\n\t sudo ln ./out/vzcontrol /usr/bin/vzcontrol";
+?>

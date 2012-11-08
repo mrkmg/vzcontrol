@@ -6,9 +6,10 @@ Installation / Building
 
 **Requirements**
 
-- PHP5
-- SSH
-- For each OpenVZ Host you plan on controlling, ssh keys for the root account must be shared
+- PHP 5.3
+    - php.ini must have "phar.readonly = Off"
+- SSH 
+- For each OpenVZ Host you plan on controlling, ssh keys for the root account must be shared to all other hosts
 
 **Optional**
 
@@ -18,7 +19,7 @@ Installation / Building
 
 1. Clone the repo `git clone https://github.com/mrkmg/vzcontrol.git`
 2. Enter Dir `cd vzcontrol`
-3. Edit config/config.php and add all your OpenVZ Hosts
+3. Edit src/config/config.php and add all your OpenVZ Hosts
 4. Build `./build`
 5. *Optional* Symlink the script to PATH eg. `sudo ln ./out/vzcontrol /usr/bin/vzcontrol`
 
