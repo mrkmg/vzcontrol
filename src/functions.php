@@ -43,6 +43,7 @@ function autocompleterParse($pre,$cur){
         $autos = explode(' ',$auto_str);
         $pres = explode(' ',$pre);
         array_shift($pres);
+        if(!isset($autos[count($pres)-1])) return array();
         $type = $autos[count($pres)-1];
         switch(substr($type,0,1)){
             case '$':

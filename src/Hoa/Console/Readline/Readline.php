@@ -866,6 +866,7 @@ class Readline {
             for($i=0;$i<$item_length;$i++){
                 if(!count($match_array)) $match_array = str_split($item);
                 else $match_array = array_intersect_assoc($match_array, str_split($item));
+                if(!count($match_array)) break;
             }
         }
         $count = count($matches);
