@@ -1,4 +1,4 @@
-VzControl - v0.1.3
+VzControl - v0.1.4
 =========
 
 A CLI enviroment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
@@ -18,7 +18,7 @@ the following and more.
 - Create a new container
 - Shutdown/Reboot an OpenVZ Host
 - Run custom commands on an OpenVZ Host
-- Tab autocomplete of commands (Soon to include autocompeltion of hosts as well)
+- Tab autocomplete of commands
 
 
 Installation / Building
