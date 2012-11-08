@@ -26,82 +26,98 @@ $function_mapping = array(
     'ls'=>array(
         'func'=>'list_servers',
         'usage'=>'[HOST] [HOST] ...',
-        'desc'=>'List running containers on OpenVZ Host(s)'
+        'desc'=>'List running containers on OpenVZ Host(s)',
+        'auto'=>'$host $host $host $host $host'
     ),
     'lsa'=>array(
         'func'=>'list_all_servers',
         'usage'=>'[HOST] [HOST] ...',
-        'desc'=>'List all containers on OpenVZ Host(s)'
+        'desc'=>'List all containers on OpenVZ Host(s)',
+        'auto'=>'$host $host $host $host $host'
     ),
     'lst'=>array(
         'func'=>'list_templates',
         'usage'=>'[HOST] [HOST] ...',
-        'desc'=>'List templates on OpenVZ Host(s)'
+        'desc'=>'List templates on OpenVZ Host(s)',
+        'auto'=>'$host $host $host $host $host'
     ),
     'lsot'=>array(
         'func'=>'list_online_templates',
         'usage'=>'[SECTION]',
-        'desc'=>'List avaliable template for download. Sections include beta, old, and contrib'
+        'desc'=>'List avaliable template for download. Sections include beta, old, and contrib',
+        'auto'=>'?beta,old,contrib'
     ),
     'install'=>array(
         'func'=>'download_template',
         'usage'=>'HOST TEMPLATE [SECTION]',
-        'desc'=>'Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib'
+        'desc'=>'Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib',
+        'auto'=>'$host $template ?beta,old,contrib'
     ),
     'mv'=>array(
         'func'=>'move_container',
-        'usage'=>'CTID CURRENTHOST DESTHOST',
-        'desc'=>'Perform an offline migration of containter CTID on CURRENTHOST to DESTHOST'
+        'usage'=>'CURENTHOST CTID DESTHOST',
+        'desc'=>'Perform an offline migration of containter CTID on CURRENTHOST to DESTHOST',
+        'auto'=>'$host $ctid $host'
     ),
     'mvo'=>array(
         'func'=>'move_container_online',
-        'usage'=>'CTID CURRENTHOST DESTHOST',
-        'desc'=>'Perform an online migration of container CTID on CURRENTHOST to DESTHOST'
+        'usage'=>'CURRENTHOST CTID DESTHOST',
+        'desc'=>'Perform an online migration of container CTID on CURRENTHOST to DESTHOST',
+        'auto'=>'$host $ctid $host'
     ),
     'start'=>array(
         'func'=>'start_container',
         'usage'=>'HOST CTID',
-        'desc'=>'Start container CTID on HOST'
+        'desc'=>'Start container CTID on HOST',
+        'auto'=>'$host $ctid'
     ),
     'stop'=>array(
         'func'=>'stop_container',
         'usage'=>'HOST CTID',
-        'desc'=>'Stop containter CTID on HOST'
+        'desc'=>'Stop containter CTID on HOST',
+        'auto'=>'$host $ctid'
     ),
     'restart'=>array(
         'func'=>'restart_container',
         'usage'=>'HOST CTID',
-        'desc'=>'Restart containter CTID on HOST'
+        'desc'=>'Restart containter CTID on HOST',
+        'auto'=>'$host $ctid'
     ),
     'enter'=>array(
         'func'=>'enter_container',
         'usage'=>'HOST CTID',
-        'desc'=>'Enter containter CTID on HOST'
+        'desc'=>'Enter containter CTID on HOST',
+        'auto'=>'$host $ctid'
     ),
     'create'=>array(
         'func'=>'create_container',
         'usage'=>'HOST',
-        'desc'=>'Create a new container on HOST'
+        'desc'=>'Create a new container on HOST',
+        'auto'=>'$host'
     ),
     'rm'=>array(
         'func'=>'destroy_container',
         'usage'=>'HOST CTID',
-        'desc'=>'Destroy containter CTID on HOST'
+        'desc'=>'Destroy containter CTID on HOST',
+        'auto'=>'$host $ctid'
     ),
     'reboot'=>array(
         'func'=>'reboot_host',
         'usage'=>'HOST [HOST] ...',
-        'desc'=>'Reboot OpenVZ Host(s)'
+        'desc'=>'Reboot OpenVZ Host(s)',
+        'auto'=>'$host $host $host $host $host'
     ),
     'shutdown'=>array(
         'func'=>'shutdown_host',
         'usage'=>'HOST [HOST] ...',
-        'desc'=>'Shutdown OpenVZ Host(s)'
+        'desc'=>'Shutdown OpenVZ Host(s)',
+        'auto'=>'$host $host $host $host $host'
     ),
     'uptime'=>array(
         'func'=>'uptime',
         'usage'=>'[HOST] [HOST] ...',
-        'desc'=>'Get uptime for OpenVZ Host(s)'
+        'desc'=>'Get uptime for OpenVZ Host(s)',
+        'auto'=>'$host $host $host $host $host'
     ),
     'clear'=>array(
         'func'=>'clear_screen',
@@ -111,7 +127,8 @@ $function_mapping = array(
     'raw'=>array(
         'func'=>'raw',
         'usage'=>'HOST COMMAND',
-        'desc'=>'Runs COMMAND on HOST'
+        'desc'=>'Runs COMMAND on HOST',
+        'auto'=>'$host $ctid'
     ),
     'quit'=>array(
         'func'=>'quit_program',
@@ -126,7 +143,8 @@ $function_mapping = array(
     'help'=>array(
         'func'=>'help',
         'usage'=>'[COMMAND]',
-        'desc'=>'Show this help page'
+        'desc'=>'Show this help page',
+        'auto'=>'$func'
     )
 );
 

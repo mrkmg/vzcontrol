@@ -29,6 +29,53 @@ function putLine($line){
     return true;
 }
 
+function autocompleterParse($pre,$cur){
+    global $servers;
+    global $function_mapping;
+
+    if(strlen($pre)){
+        $pCurrent = explode(' ',$pre);
+        $func = $pCurrent[0];
+        if(!isset($function_mapping[$func]['auto'])){
+            return array();
+        }
+        $auto_str = $function_mapping[$func]['auto'];
+        $autos = explode(' ',$auto_str);
+        $pres = explode(' ',$pre);
+        array_shift($pres);
+        $type = $autos[count($pres)-1];
+        switch(substr($type,0,1)){
+            case '$':
+                $var = substr($type,1);
+                if($var == 'host') $to_check = array_keys($servers);
+                elseif($var == 'ctid') $to_check = getCtidFor($pres[count($pres)-2]);
+                break;
+            case '?':
+                $to_check = explode(',',substr($type,1));
+                break;
+        }
+    }else{
+        $to_check = array_keys($function_mapping);
+    }
+
+    $curlen = strlen($cur);
+    $matches = array();
+    foreach($to_check as $item)
+        if(substr($item,0,$curlen) == $cur) $matches[] = $item;
+
+    return $matches;
+
+}
+
+function getCtidFor($server_name){
+    global $servers;
+
+    $ctid_raw = returnSSH($server_name,'vzlist -a -H -1');
+    $ctids = explode("\n",$ctid_raw);
+    print_r($ctids);
+    die();
+}
+
 function putHeader($header){
     putLine($header);
     putLine(str_repeat('-', strlen($header)));
@@ -47,6 +94,18 @@ function runSSH($server_name,$command){
              . ' "'.str_replace('"','\\"',$command).'"';
     passthru($command,$return);
     $reader->setStty();
+    return !$return;
+}
+
+function returnSSH($server_name,$command){
+    global $servers;
+    if(!isset($servers[$server_name])) return false;
+    $command = 'ssh -q '
+             . (isset($servers[$server_name]['port'])?' -p '.$servers[$server_name]['port']:'')
+             . ' -o ConnectTimeout=2 root@'
+             . $servers[$server_name]['host']
+             . ' "'.str_replace('"','\\"',$command).'"';
+    $output = shell_exec($command,$return);
     return !$return;
 }
 
@@ -73,11 +132,11 @@ function move_container($args,$live=false){
 
     $args = explode(' ',$args);
     if(count($args) !== 3){
-        putLine('Incorrect usage. Use mv[l] CTID SOURCE DEST');
+        putLine('Incorrect usage.');
         return false;
     }
-    $ctid = $args[0];
-    $source = $args[1];
+    $source = $args[0];
+    $ctid = $args[1];
     $dest = $args[2];
 
     if(!isset($servers[$source])){

@@ -150,7 +150,7 @@ class Readline {
      */
     protected $_prefix         = null;
 
-    private $_autocomplete = array();
+    private $_autocomplete;
 
 
 
@@ -187,8 +187,9 @@ class Readline {
         return;
     }
 
-    public function setAutocomplete($items){
-        $this->_autocomplete = $items;
+    public function setAutocomplete($function){
+        if(!is_callable($function)) throw new Exception('Not callable');
+        $this->_autocomplete = $function;
     }
 
     public function setStty(){
@@ -842,42 +843,51 @@ class Readline {
     }
 
     public function _bindTab( Readline $self){
-
-        $current = $this->getLine();
+        if(!$this->_autocomplete) return static::STATE_CONTINUE;
+        $raw = $this->getLine();
+        $words = explode(' ',$raw);
+        if(count($words)>1){
+            $current = array_pop($words);
+            $pre = implode(' ',$words).' ';
+        }elseif(count($words)==1){
+            $current = $words[0];
+            $pre = '';
+        }else{
+            $current = '';
+            $pre = '';
+        }
         $len = strlen($current);
-        $matches = array();
+        $func = $this->_autocomplete;
+        $matches = $func($pre,$current);
         $match_array = array();
-        foreach($this->_autocomplete as $item)
+        foreach($matches as $item)
         {
-            if(substr($item,0,$len) == $current)
-            {
-                $matches[]=$item;
-                $item_length = strlen($item);
-                for($i=0;$i<$item_length;$i++){
-                    if(!count($match_array)) $match_array = str_split($item);
-                    else $match_array = array_intersect_assoc($match_array, str_split($item));
-                }
-            }   
+            $item_length = strlen($item);
+            for($i=0;$i<$item_length;$i++){
+                if(!count($match_array)) $match_array = str_split($item);
+                else $match_array = array_intersect_assoc($match_array, str_split($item));
+            }
         }
         $count = count($matches);
         if($count > 1){
             $this->_write(PHP_EOL.implode(' ',$matches).PHP_EOL);
             $self->_write("\r\033[K" . $self->getPrefix());
-            $current = implode('',$match_array);
+            $current = $pre.implode('',$match_array);
             $self->setBuffer($buffer = $current);
             $self->setLine($buffer);
-            return static::STATE_CONTINUE;
         }
         else if($count == 1){
             $self->_write("\r\033[K" . $self->getPrefix());
-            $self->setBuffer($buffer = $matches[0]);
+            $self->setBuffer($buffer = $pre.$matches[0]);
             $self->setLine($buffer);
-            return static::STATE_CONTINUE;
         }
-        else{
-            return static::STATE_CONTINUE;
+        else
+        {
+            $self->_write("\r\033[K" . $self->getPrefix());
+            $self->setBuffer($buffer = $raw);
+            $self->setLine($buffer);
         }
-
+        return static::STATE_CONTINUE;
     }
 
     /**

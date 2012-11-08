@@ -31,7 +31,7 @@ require('conf/config.php');
 
 
 $reader = new Hoa\Console\Readline\Readline;
-$reader->setAutocomplete(arraY_keys($function_mapping));
+$reader->setAutocomplete('autocompleterParse');
 showBanner();
 while(1){
     $line = $reader->readLine('VzControl>');
