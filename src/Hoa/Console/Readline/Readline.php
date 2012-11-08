@@ -184,6 +184,13 @@ class Readline {
         return;
     }
 
+    public function setStty(){
+        \Hoa\Console\System::execute('stty -echo -icanon min 1 time 0');
+    }
+
+    public function restoreStty(){
+        \Hoa\Console\System::execute('stty ' . $this->_oldStty);
+    }
     /**
      * Read a line from STDIN.
      *

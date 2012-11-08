@@ -31,6 +31,9 @@ function putLine($line){
 
 function runSSH($server_name,$command){
     global $servers;
+    global $reader;
+    if(!isset($servers[$server_name])) return false;
+    $reader->restoreStty();
     $command = 'ssh'
              . (isset($servers[$server_name]['port'])?' -p '.$servers[$server_name]['port']:'')
              . ' -o ConnectTimeout=2 root@'
@@ -38,6 +41,7 @@ function runSSH($server_name,$command){
              . ' "'.str_replace('"','\\"',$command).'"';
     //putLine($command);
     passthru($command,$return);
+    $reader->setStty();
     return !$return;
 }
 
@@ -213,7 +217,7 @@ function destroy_container($args){
 
 function list_templates($args){
     global $servers;
-    
+
     $servers_wanted = get_wanted_servers($args);
 
     foreach($servers_wanted as $server_name){
@@ -360,9 +364,15 @@ function reboot_host($args){
 }
 
 function raw($args){
+    global $servers;
     $args = explode(' ',$args,2);
     $host = $args[0];
     $command = $args[1];
+
+    if(!isset($severs[$host])){
+        putline($host.' is not known.');
+        return false;
+    }
     runSSH($host,$command);
 
     return true;
