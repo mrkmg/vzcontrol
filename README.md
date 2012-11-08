@@ -1,5 +1,24 @@
-VzControl
+VzControl - v0.1
 =========
+
+A CLI enviroment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
+php5, and uses standard tools such as vzctl and vzmigrate to facilitate all actions.
+
+Overview
+--------
+
+VzControl is run from a command line, and gives you an interface to perform actions very easily. All commands are
+based on the standard *nix utility names, so the learning curve should be mininal. The actions include
+the following and more.
+
+- List containers on some/all OpenVZ Hosts
+- Start/Stop/Restart containers
+- List/Download templates to OpenVZ Hosts
+- Migrate containers from one OpenVZ Host to another (offline and online)
+- Create a new container
+- Shutdown/Reboot an OpenVZ Host
+- Run custom commands on an OpenVZ Host
+
 
 Installation / Building
 -----------------------
@@ -29,7 +48,7 @@ Usage
 After you have built and configured vzcontrol, you can launch it from the out directory.
 
     If you did symlink the script: `vzcontrol`
-    If you did not symlink: `./vzcontrol`
+    If you did not symlink: `./out/vzcontrol`
 
 Here is a list of all commands
 
