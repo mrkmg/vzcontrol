@@ -34,7 +34,7 @@ function runSSH($server_name,$command){
     global $reader;
     if(!isset($servers[$server_name])) return false;
     $reader->restoreStty();
-    $command = 'ssh -t'
+    $command = 'ssh -q -t'
              . (isset($servers[$server_name]['port'])?' -p '.$servers[$server_name]['port']:'')
              . ' -o ConnectTimeout=2 root@'
              . $servers[$server_name]['host']
@@ -372,7 +372,7 @@ function raw($args){
         putLine($host.' is not known');
         return false;
     }
-    
+
     runSSH($host,$command);
 
     return true;
