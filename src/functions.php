@@ -39,6 +39,7 @@ function runSSH($server_name,$command){
              . ' -o ConnectTimeout=2 root@'
              . $servers[$server_name]['host']
              . ' "'.str_replace('"','\\"',$command).'"';
+    putLine($command);
     passthru($command,$return);
     $reader->setStty();
     return !$return;
