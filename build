@@ -26,7 +26,8 @@
 echo 'Building VzControl'.PHP_EOL;
 $srcRoot = "./src";
 $buildRoot = "./out";
- 
+
+if(!is_dir($buildRoot)) mkdir($buildRoot); 
 if(file_exists($buildRoot.'/vzcontrol')) unlink($buildRoot.'/vzcontrol');
 
 $phar = new Phar($buildRoot . "/vzcontrol.phar", 
