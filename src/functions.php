@@ -106,7 +106,7 @@ function returnSSH($server_name,$command){
              . $servers[$server_name]['host']
              . ' "'.str_replace('"','\\"',$command).'"';
     $output = shell_exec($command,$return);
-    return !$return;
+    return $output;
 }
 
 function list_servers($args,$all=false){
