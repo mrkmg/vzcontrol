@@ -229,10 +229,25 @@ function create_container($args){
         putLine($args.' is not known');
         return false;
     }
+    global $___HOST;
+    $___HOST = $args;
 
+    $_oldAuto = $reader->getAutocomplete();
+    $reader->removeAutocomplete();
     putLine('You will be prompted for a series of details.');
     $ctid = $reader->readLine('CTID? ');
+    $reader->setAutocomplete(function($pre,$cur){
+        global $___HOST;
+        $templates = get_templates_for_host($___HOST);
+        $curlen = strlen($cur);
+        $matches = array();
+        foreach($templates as $item)
+            if(substr($item,0,$curlen) == $cur) $matches[] = $item;
+
+        return $matches;
+    });
     $ostemplate = $reader->readLine('OS Template? ');
+    $reader->removeAutocompelte();
     $ipaddr = $reader->readLine('IP Address? ');
     $hostname = $reader->readLine('Hostname? ');
     $nameserver = $reader->readLine('Nameserver? ');
@@ -247,7 +262,7 @@ function create_container($args){
         putLine('Quiting, password did not match');
         return false;
     }
-
+    $reader->setAutocomplete($_oldAuto);
     putLine('Creating container');
     runSSH($args,'vzctl create '.$ctid.' --ostemplate '.$ostemplate);
     runSSH($args,'vzctl set '.$ctid.' --ipadd '.$ipaddr.' --save');
@@ -293,6 +308,15 @@ function list_templates($args){
     }
 
     return true;
+}
+
+function get_templates_for_host($host){
+    global $servers;
+
+    $templates = returnSSH($host,'ls /vz/template/cache | sed s/.tar.gz//');
+    $templates = explode("\n",$templates);
+
+    return $templates;
 }
 
 function uptime($args){

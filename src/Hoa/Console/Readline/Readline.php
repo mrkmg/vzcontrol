@@ -192,6 +192,14 @@ class Readline {
         $this->_autocomplete = $function;
     }
 
+    public function getAutocomplete(){
+        return $this->_autocomplete;
+    }
+
+    public function removeAutocomplete(){
+        $this->_autocomplete = null;
+    }
+
     public function setStty(){
         \Hoa\Console\System::execute('stty -echo -icanon min 1 time 0');
     }
@@ -862,12 +870,10 @@ class Readline {
         $match_array = array();
         foreach($matches as $item)
         {
-            $item_length = strlen($item);
-            for($i=0;$i<$item_length;$i++){
-                if(!count($match_array)) $match_array = str_split($item);
-                else $match_array = array_intersect_assoc($match_array, str_split($item));
-                if(!count($match_array)) break;
-            }
+            if(!count($match_array)) $match_array = str_split($item);
+            else $match_array = array_intersect_assoc($match_array, str_split($item));
+
+            if(!count($match_array)) break;
         }
         $count = count($matches);
         if($count > 1){
@@ -879,7 +885,7 @@ class Readline {
         }
         else if($count == 1){
             $self->_write("\r\033[K" . $self->getPrefix());
-            $self->setBuffer($buffer = $pre.$matches[0]);
+            $self->setBuffer($buffer = $pre.$matches[0].' ');
             $self->setLine($buffer);
         }
         else
