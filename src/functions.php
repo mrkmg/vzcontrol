@@ -252,7 +252,7 @@ function create_container($args){
     $ipaddr = $reader->readLine('IP Address? ');
     $hostname = $reader->readLine('Hostname? ');
     $nameserver = $reader->readLine('Nameserver? ');
-    $pReader = new Password;
+    $pReader = new Hoa\Console\Readline\Password;
     $tries = 0;
     do{
         $rootPassword    =  $pReader->readLine('Root Password? ');
