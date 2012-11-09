@@ -50,6 +50,7 @@ function autocompleterParse($pre,$cur){
                 $var = substr($type,1);
                 if($var == 'host') $to_check = array_keys($servers);
                 elseif($var == 'ctid') $to_check = getCtidFor($pres[count($pres)-2]);
+                elseif($var == 'template') $to_check = getOnlinetemplates(null);
                 break;
             case '?':
                 $to_check = explode(',',substr($type,1));
@@ -263,9 +264,23 @@ function create_container($args){
         putLine('Quiting, password did not match');
         return false;
     }
+    putLine('Going to create a new container on '.$args);
+    putLine('CTID: '.$ctid);
+    putLine('OS Template: '.$ostemplate);
+    putLine('IP Address: '.$ipaddr);
+    putLine('Hostname: '.$hostname);
+    putLine('Nameserver: '.$nameserver);
+    $confirm = $reader->readLine('Are you sure you want to create this container? (y/N) ');
+    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
+        return true;
+    }
     $reader->setAutocomplete($_oldAuto);
     putLine('Creating container');
-    runSSH($args,'vzctl create '.$ctid.' --ostemplate '.$ostemplate);
+    if(!runSSH($args,'vzctl create '.$ctid.' --ostemplate '.$ostemplate))
+    {
+        putLine('Failed to create container');
+        return true;
+    }
     runSSH($args,'vzctl set '.$ctid.' --ipadd '.$ipaddr.' --save');
     runSSH($args,'vzctl set '.$ctid.' --nameserver '.$nameserver.' --save');
     runSSH($args,'vzctl set '.$ctid.' --hostname '.$hostname.' --save');
@@ -366,6 +381,19 @@ function list_online_templates($args){
     }
 
     return true;
+}
+
+function getOnlinetemplates($args){
+    $url = 'download.openvz.org';
+    $folder = 'template/precreated/';
+    if(strlen($args)) $folder .= $args.'/';
+    $conn = ftp_connect($url);
+    $log = ftp_login($conn, 'anonymous','anonymous');
+    $file_list = ftp_nlist($conn, $folder);
+    $file_list = array_filter($file_list,function($o){ return preg_match('/\.tar\.gz$/', $o); });
+    array_walk($file_list,function(&$o,$key,$folder){ $o = substr($o,strlen($folder)); $o = substr($o,0,strlen($o)-7); },$folder);
+    
+    return $file_list;
 }
 
 function download_template($args){
