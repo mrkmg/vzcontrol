@@ -247,7 +247,7 @@ function create_container($args){
         return $matches;
     });
     $ostemplate = $reader->readLine('OS Template? ');
-    $reader->removeAutocompelte();
+    $reader->removeAutocomplete();
     $ipaddr = $reader->readLine('IP Address? ');
     $hostname = $reader->readLine('Hostname? ');
     $nameserver = $reader->readLine('Nameserver? ');
