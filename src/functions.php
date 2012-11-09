@@ -225,6 +225,7 @@ function enter_container($args){
 function create_container($args){
     global $servers;
     global $reader;
+    $args = trim($args);
     if(!isset($servers[$args])){
         putLine($args.' is not known');
         return false;
