@@ -20,9 +20,59 @@ the following and more.
 - Run custom commands on an OpenVZ Host
 - Tab autocomplete of commands and container completion
 
+Installation
+------------
 
-Installation / Building
------------------------
+**Requirements**
+
+- PHP 5.3
+- SSH 
+- For each OpenVZ Host you plan on controlling, ssh keys for the root account must be shared to all other hosts
+
+**Optional**
+
+- Share the ssh key from the computer you are running vzcontrol on with all OpenVZ Hosts
+
+**Steps**
+
+1. Either clone the repo or download only the packaged script
+    - `git clone https://github.com/mrkmg/vzcontrol.git`
+    - `wget https://raw.github.com/mrkmg/vzcontrol/master/out/vzcontrol`
+2. Make vzcontrol executable
+    - `chmod +x vzcontrol`
+3. Either manually create a config file or have vzcontrol generate a sample file for you
+    - `./vzcontrol make` This creates a config file at `~/.vzcontrol.conf`
+4. Put all the servers in your cluster into the config file (See Configuration Below)
+5. *Optional* Symlink the script to PATH
+    - `sudo ln ./out/vzcontrol /usr/bin/vzcontrol` If cloned from repo
+    - `sudo ln .vzcontrol /usr/bin/vzcontrol` If downloaded only the script
+6. Run vzcontrol
+    - `./out/vzcontrol` If cloned from repo
+    - `./vzcontrol` If downloaded
+    - `vzcontrol` If symlinked
+
+Configuration
+-------------
+
+vzcontrol uses a configuration file to determine which servers it is able to administer. The file is very easy to understand. The file must be in the following format
+
+    ;Sample vzcontrol.conf
+
+    ;This is the shortname of server, something you could easily remember. Usually the systems hostname shortened
+    [shortname]
+    ;Every server must have a host
+    host = shortname.domain.tld
+    ;Port is optional, this specifies what port SSH runs on. Defaults to 22
+    port = 2222
+
+    [server2]
+    host = server2.host.tld
+
+    [server3]
+    host = 1.2.3.4
+
+Building
+--------
 
 **Requirements**
 
@@ -39,7 +89,6 @@ Installation / Building
 
 1. Clone the repo `git clone https://github.com/mrkmg/vzcontrol.git`
 2. Enter Dir `cd vzcontrol`
-3. Edit src/config/config.php and add all your OpenVZ Hosts
 4. Build `./build`
 5. *Optional* Symlink the script to PATH eg. `sudo ln ./out/vzcontrol /usr/bin/vzcontrol`
 

@@ -1,0 +1,11 @@
+{
+    "servers":{
+        "server1":{
+            "host":"name.domain"
+        },
+        "server2":{
+            "host":"1.2.3.4",
+            "port":"2222"
+        }
+    }
+}

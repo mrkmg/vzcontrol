@@ -27,12 +27,44 @@ require('Hoa/Console/Readline/Readline.php');
 require('Hoa/Console/Readline/Password.php');
 require('functions.php');
 require('function_map.php');
-require('conf/config.php');
 
+
+if(isset($argv[1])){
+    if($argv[1] == 'make'){
+        if(isset($_SERVER['HOME'])){
+            writeINIFile($_SERVER['HOME'].'/.vzcontrol.conf');
+            die('Demo config file created at ~/.vzcontrol.conf'.PHP_EOL.'Please edit this file to match your cluster'.PHP_EOL);
+        }else{
+            die('No config file was given, and your home directory could not be found');
+        }
+    }
+    $config_file = $argv[1];
+}else{
+    if(isset($_SERVER['HOME'])){
+        $config_file = $_SERVER['HOME'].'/.vzcontrol.conf';
+    }else{
+        die('No config file was given, and your home directory could not be found');
+    }
+
+    if(!file_exists($config_file)){
+        if(!file_exists('./vzcontrol.conf')){
+            die('Config file not found. Looked for ~/.vzcontrol.conf and ./vzcontrol.conf');
+        }
+        $config_file = './vzcontrol.conf';
+    }
+}
+
+if(!file_exists($config_file)){
+    die($config_file.' does not exist.');
+}
+
+
+$servers = parse_ini_file($config_file,true);
 
 $reader = new Hoa\Console\Readline\Readline;
 $reader->setAutocomplete('autocompleterParse');
 showBanner();
+
 while(1){
     $line = $reader->readLine('VzControl>');
     $line = explode(' ',$line,2);

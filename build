@@ -33,6 +33,7 @@ if(file_exists($buildRoot.'/vzcontrol')) unlink($buildRoot.'/vzcontrol');
 $phar = new Phar($buildRoot . "/vzcontrol.phar", 
     FilesystemIterator::CURRENT_AS_FILEINFO |       FilesystemIterator::KEY_AS_FILENAME, "vzcontrol.phar");
 $phar->buildFromDirectory($srcRoot);
+$phar->addFile($srcRoot.'/conf/config.json');
 $defaultStub = $phar->createDefaultStub("vzcontrol.php");
 $stub = "#!/usr/bin/env php \n".$defaultStub;
 $phar->setStub($stub);

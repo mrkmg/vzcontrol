@@ -547,4 +547,18 @@ function showBanner(){
     putLine('');
 }
 
+function writeINIFile($location){
+    file_put_contents($location,
+'; This is a VzControl configuration file
+
+[server1]
+host = server1.domain
+
+[server2]
+host = 1.2.3.4
+port = 2222
+'
+);
+}
+
 ?>
