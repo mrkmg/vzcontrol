@@ -353,6 +353,7 @@ function get_wanted_servers($args){
     global $servers;
     if(strlen($args)){
         $servers_wanted = explode(' ',$args);
+        $servers_wanted = array_filter($servers_wanted,function($v){return !empty($v); });
         foreach($servers_wanted as $server_name){
             if(!isset($servers[$server_name])){
                 putLine($server_name.' is not known');
