@@ -1,4 +1,4 @@
-VzControl - v0.2
+VzControl - v0.2.1
 =========
 
 A CLI enviroment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
@@ -140,6 +140,13 @@ Here is a list of all commands
 
     rm HOST CTID
         Destroy containter CTID on HOST
+
+    set HOST CTID OPTION
+        Change OPTION of CTID of HOST
+        OPTIONS include: memory, autoboot, cpuunit, cpulimit, cpus,d iskquota, diskspace, ipadd, ipdel
+
+    see HOST CTID
+        See configuration of CTID of HOST
 
     reboot HOST [HOST] ...
         Reboot OpenVZ Host(s)
