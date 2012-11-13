@@ -116,12 +116,14 @@ function list_servers($args,$all=false){
     global $servers;
     
     $servers_wanted = get_wanted_servers($args);
+    if(!$servers_wanted) return false;
 
     foreach($servers_wanted as $server_name){
         putHeader('Listing for '.$server_name);
         if(!runSSH($server_name,'vzlist'.($all?' -a':''))){
             putLine($server_name.' is not online');
         }
+        putLine('');
     }
     return true;
 }
@@ -270,7 +272,7 @@ function create_container($args){
     putLine('IP Address: '.$ipaddr);
     putLine('Hostname: '.$hostname);
     putLine('Nameserver: '.$nameserver);
-    $confirm = $reader->readLine('Are you sure you want to create this container? (y/N) ');
+    $confirm = $reader->readLine('Are you sure you want to create this container? (y/N)> ');
     if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
         return true;
     }
@@ -316,6 +318,7 @@ function list_templates($args){
     global $servers;
 
     $servers_wanted = get_wanted_servers($args);
+    if(!$servers_wanted) return false;
 
     foreach($servers_wanted as $server_name){
         putHeader('Listing Templates for '.$server_name);
@@ -339,6 +342,7 @@ function uptime($args){
     global $servers;
 
     $servers_wanted = get_wanted_servers($args);
+    if(!$servers_wanted) return false;
 
     foreach($servers_wanted as $server_name){
         putHeader('Uptime for '.$server_name);
@@ -357,6 +361,7 @@ function get_wanted_servers($args){
         foreach($servers_wanted as $server_name){
             if(!isset($servers[$server_name])){
                 putLine($server_name.' is not known');
+                putLine('');
                 return false;
             }
         }
@@ -421,20 +426,11 @@ function shutdown_host($args){
     global $servers;
     global $reader;
 
-    if(strlen($args)){
-        $servers_wanted = explode(' ',$args);
-        foreach($servers_wanted as $server_name){
-            if(!isset($servers[$server_name])){
-                putLine($server_name.' is not known');
-                return false;
-            }
-        }
-    }
-    else{
-        return false;
-    }
+    
+    $servers_wanted = get_wanted_servers($args);
+    if(!$servers_wanted) return false;
 
-    $confirm = $reader->readLine('Are you sure you want to shutdown '.$args.'? (y/N) ');
+    $confirm = $reader->readLine('Are you sure you want to shutdown '.implode(', ',$servers_wanted).'? (y/N)> ');
     if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
         return true;
     }
@@ -452,20 +448,10 @@ function reboot_host($args){
     global $servers;
     global $reader;
 
-    if(strlen($args)){
-        $servers_wanted = explode(' ',$args);
-        foreach($servers_wanted as $server_name){
-            if(!isset($servers[$server_name])){
-                putLine($server_name.' is not known');
-                return false;
-            }
-        }
-    }
-    else{
-        return false;
-    }
+    $servers_wanted = get_wanted_servers($args);
+    if(!$servers_wanted) return false;
 
-    $confirm = $reader->readLine('Are you sure you want to reboot '.$args.'? (y/N) ');
+    $confirm = $reader->readLine('Are you sure you want to reboot '.$args.'? (y/N)> ');
     if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
         return true;
     }
@@ -477,6 +463,88 @@ function reboot_host($args){
     }
     
     return true;
+}
+
+function set_option($args){
+    global $servers;
+    global $reader;
+
+    $araw = exploder(' ',$args);
+    if(count($araw) != 3) return false;
+
+    $host = $araw[0];
+    $ctid = $araw[1];
+    $command = $araw[2];
+
+    if(!isset($servers[$host])) return false;
+
+    switch($command){
+        case 'memory':
+            $ram = $reader->readLine('Amount of RAM?> ');
+            $burst = $reader->readLine('Burstable RAM?> ');
+            runSSH($host,'vzctl set '.$ctid.' --vmguarpages '.$ram.' --save');
+            runSSH($host,'vzctl set '.$ctid.' --oomguarpages '.$ram.' --save');
+            runSSH($host,'vzctl set '.$ctid.' --privvmpages '.$ram.':'.$burst.' --save');
+            return true;
+            break;
+        case 'autoboot':
+            $c = $reader->readLine('Start on Boot? (y/N)> ');
+            $b = in_array($c,array('y','Y','yes','Yes','YES'));
+            runSSH($host,'vzctl set '.$ctid.' --onboot '.($b?'yes':'no').' --save');
+            return true;
+            break;
+        case 'cpuunit':
+            $units = $reader->readLine('# of units?> ');
+            runSSH($host,'vzctl set '.$ctid.' --cpuunits '.$units.' --save');
+            return true;
+            break;
+        case 'cpulimit':
+            $perc = $reader->readLine('Max CPU Usage (%)?> ');
+            runSSH($host,'vzctl set '.$ctid.' --cpulimit '.$perc.' --save');
+            return true;
+            break;
+        case 'diskquota':
+            $c = $reader->readLine('Enable Disk Quotes? (y/N)> ');
+            $b = in_array($c,array('y','Y','yes','Yes','YES'));
+            runSSH($host,'vzctl set '.$ctid.' --diskquota '.($b?'yes':'no').' --save');
+            return true;
+            break;
+        case 'diskspace':
+            $units = $reader->readLine('Diskspace?> ');
+            runSSH($host,'vzctl set '.$ctid.' --diskspace '.$units.' --save');
+            return true;
+        case 'ipadd':
+            $ip = $reader->readLine('IP to add?> ');
+            runSSH($host,'vzctl set '.$ctid.' --ipadd '.$ip.' --save');
+            return true;
+        case 'ipdel':
+            $ip = $reader->readLine('IP to add?> ');
+            runSSH($host,'vzctl set '.$ctid.' --ipdel '.$ip.' --save');
+            return true;
+            break;
+    }
+
+    return false;
+}
+
+function see_options($args){
+    global $servers;
+    
+    $araw = exploder(' ',$args);
+    if(count($araw) != 2) return false;
+
+    $host = $araw[0];
+    $ctid = $araw[1];
+
+    if(!isset($servers[$host])) return false;
+
+    return runSSH($host,'cat /etc/vz/conf/'.$ctid.'.conf');
+}
+
+function exploder($d,$s){
+    $ar = explode($d,$s);
+    $ar = array_filter($ar,function($v){return !empty($v); });
+    return $ar;
 }
 
 function raw($args){
@@ -494,7 +562,6 @@ function raw($args){
 
     return true;
 }
-
 
 function help($args){
     global $function_mapping;
@@ -543,6 +610,7 @@ function showBanner(){
     putLine('#                                    #');
     putLine('# Created By MrKMG <kevin@mrkmg.com> #');
     putLine('# Type `help` to start               #');
+    putLine('#                               v0.2 #');
     putLine('######################################');
     putLine('');
 }

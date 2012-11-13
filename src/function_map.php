@@ -65,6 +65,19 @@ $function_mapping = array(
         'desc'=>'Perform an online migration of container CTID on CURRENTHOST to DESTHOST',
         'auto'=>'$host $ctid $host'
     ),
+    'set'=>array(
+        'func'=>'set_option',
+        'usage'=>'HOST CTID OPTION',
+        'desc'=>'Change OPTION of CTID of HOST',
+        'auto'=>'$host $ctid ?memory,autoboot,cpuunit,cpulimit,cpus,diskquota,diskspace,ipadd,ipdel'
+    ),
+    'see'=>array(
+        'func'=>'see_options',
+        'usaged'=>'HOST CTID',
+        'desc'=>'See configuration of CTID of HOST',
+        'auto'=>'$host $ctid'
+
+    ),
     'start'=>array(
         'func'=>'start_container',
         'usage'=>'HOST CTID',

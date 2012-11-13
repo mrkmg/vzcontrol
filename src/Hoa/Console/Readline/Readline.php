@@ -867,19 +867,35 @@ class Readline {
         $len = strlen($current);
         $func = $this->_autocomplete;
         $matches = $func($pre,$current);
-        $match_array = array();
-        foreach($matches as $item)
-        {
-            if(!count($match_array)) $match_array = str_split($item);
-            else $match_array = array_intersect_assoc($match_array, str_split($item));
-
-            if(!count($match_array)) break;
-        }
         $count = count($matches);
         if($count > 1){
             $this->_write(PHP_EOL.implode(' ',$matches).PHP_EOL);
             $self->_write("\r\033[K" . $self->getPrefix());
-            $current = $pre.implode('',$match_array);
+
+            $best = '';
+            $match_arrays = array();
+            foreach($matches as $item)
+                $match_arrays[] = str_split($item);
+
+            $i = 0;
+            while(true){
+                $this_round_good = true;
+                $first = true;
+                $curLetter = '';
+                foreach($match_arrays as $arr){
+                    if(!isset($arr[$i])) break 2;
+                    if($first){
+                        $curLetter = $arr[$i];
+                        $first = false;
+                    }else{
+                        if($curLetter != $arr[$i]) break 2;
+                    }
+                }
+                $best .= $curLetter;
+                $i++;
+            }
+
+            $current = $pre.$best;
             $self->setBuffer($buffer = $current);
             $self->setLine($buffer);
         }
