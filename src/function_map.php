@@ -73,7 +73,7 @@ $function_mapping = array(
     ),
     'see'=>array(
         'func'=>'see_options',
-        'usaged'=>'HOST CTID',
+        'usage'=>'HOST CTID',
         'desc'=>'See configuration of CTID of HOST',
         'auto'=>'$host $ctid'
 

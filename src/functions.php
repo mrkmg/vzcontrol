@@ -610,7 +610,7 @@ function showBanner(){
     putLine('#                                    #');
     putLine('# Created By MrKMG <kevin@mrkmg.com> #');
     putLine('# Type `help` to start               #');
-    putLine('#                             v0.2.1 #');
+    putLine('#                             v0.2.2 #');
     putLine('######################################');
     putLine('');
 }
