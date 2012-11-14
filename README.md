@@ -20,13 +20,33 @@ the following and more.
 - Run custom commands on an OpenVZ Host
 - Tab autocomplete of commands and container completion
 
+Prerequisites
+------------
+
+**Debain 6.0**
+
+Install php5 and pear
+
+    apt-get install php5-cli php-pear php5-dev build-essential libpcre3-dev
+    pecl install --alldeps phar
+
+Edit sushosin to allow phar and hoa to run
+
+    nano /etc/php/conf.d/suhosin.ini
+
+Change `;suhosin.executor.include.whitelist = ` to `suhosin.executor.include.whitelist = "phar,hoa"`
+
+**CentOS 6**
+
+Install php5 and mbstring
+    yum install php-cli php-mbstring
+
+
 Installation
 ------------
 
 **Requirements**
 
-- PHP 5.3
-- SSH 
 - For each OpenVZ Host you plan on controlling, ssh keys for the root account must be shared to all other hosts
 
 **Optional**
