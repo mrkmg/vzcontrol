@@ -30,7 +30,7 @@ Install php5 and pear
     apt-get install php5-cli php-pear php5-dev build-essential libpcre3-dev
     pecl install --alldeps phar
 
-Edit sushosin to allow phar and hoa to run
+Edit suhosin to allow phar and hoa to run
 
     nano /etc/php/conf.d/suhosin.ini
 
