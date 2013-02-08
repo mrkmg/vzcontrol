@@ -62,7 +62,7 @@ Installation
     - `chmod +x vzcontrol`
 3. Either manually create a config file or have vzcontrol generate a sample file for you
     - `./vzcontrol make` This creates a config file at `~/.vzcontrol.conf`
-4. Put all the servers in your cluster into the config file (See Configuration Below)
+4. Put all the servers in your cluster into the config file (See Configuration Below) or add them via the vzcontrol interface
 5. *Optional* Symlink the script to PATH
     - `sudo ln ./out/vzcontrol /usr/bin/vzcontrol` If cloned from repo
     - `sudo ln .vzcontrol /usr/bin/vzcontrol` If downloaded only the script
@@ -90,6 +90,16 @@ vzcontrol uses a configuration file to determine which servers it is able to adm
 
     [server3]
     host = 1.2.3.4
+
+You can also dynamically create this file via the vzcontrol command interface. For example, if you are starting from the sample file created:
+
+    VzControl> removeserver server1
+    VzControl> removeserver server2
+    VzControl> addserver name1 host.domain
+    VzControl> addserver name2 1.2.4.5 2222
+    VzControl> writeconfig
+
+The about command remove the sample servers added, adds two new servers, and then writes the config file.
 
 Building
 --------
@@ -137,11 +147,17 @@ Here is a list of all commands
     install HOST TEMPLATE [SECTION]
         Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib
 
-    mv CTID CURRENTHOST DESTHOST
+    mv CURENTHOST CTID DESTHOST
         Perform an offline migration of containter CTID on CURRENTHOST to DESTHOST
 
-    mvo CTID CURRENTHOST DESTHOST
+    mvo CURRENTHOST CTID DESTHOST
         Perform an online migration of container CTID on CURRENTHOST to DESTHOST
+
+    set HOST CTID OPTION
+        Change OPTION of CTID of HOST
+
+    see HOST CTID
+        See configuration of CTID of HOST
 
     start HOST CTID
         Start container CTID on HOST
@@ -160,13 +176,6 @@ Here is a list of all commands
 
     rm HOST CTID
         Destroy containter CTID on HOST
-
-    set HOST CTID OPTION
-        Change OPTION of CTID of HOST
-        OPTIONS include: memory, autoboot, cpuunit, cpulimit, cpus,d iskquota, diskspace, ipadd, ipdel
-
-    see HOST CTID
-        See configuration of CTID of HOST
 
     reboot HOST [HOST] ...
         Reboot OpenVZ Host(s)
@@ -191,3 +200,12 @@ Here is a list of all commands
 
     help [COMMAND]
         Show this help page
+
+    addserver NAME HOST [PORT]
+        Add a server to the configuration
+
+    removeserver NAME
+        Remove a server to the configuration
+
+    writeconfig 
+        Writes the vzcontrol config file. Use after you add or remove servers
