@@ -1,4 +1,4 @@
-VzControl - v0.5
+VzControl - v0.5.1
 =========
 
 A CLI enviroment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in

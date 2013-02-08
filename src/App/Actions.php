@@ -582,7 +582,8 @@ class Actions {
         $host = $araw[0];
         $ctid = $araw[1];
 
-        if(!$uri == App::m('Servers')->getUriFor($host)) return false;
+
+        if(!$uri = App::m('Servers')->getUriFor($host)) return false;
 
         return !App::m('SSH')->run($uri,'cat /etc/vz/conf/'.$ctid.'.conf');
     }
