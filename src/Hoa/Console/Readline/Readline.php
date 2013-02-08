@@ -150,9 +150,12 @@ class Readline {
      */
     protected $_prefix         = null;
 
-    private $_autocomplete;
-
-
+    /**
+     * Autocomplete Function
+     * 
+     * @var \Hoa\Console\Readline string
+     */
+    protected $_autocomplete    = null;
 
     /**
      * Initialize the readline editor.
@@ -166,7 +169,7 @@ class Readline {
             return;
 
         $this->_oldStty = \Hoa\Console\System::execute('stty -g');
-        \Hoa\Console\System::execute('stty -echo -icanon min 1 time 0');
+        $this->setStty();
         mb_internal_encoding('UTF-8');
         mb_regex_encoding('UTF-8');
 
@@ -187,26 +190,6 @@ class Readline {
         return;
     }
 
-    public function setAutocomplete($function){
-        if(!is_callable($function)) throw new Exception('Not callable');
-        $this->_autocomplete = $function;
-    }
-
-    public function getAutocomplete(){
-        return $this->_autocomplete;
-    }
-
-    public function removeAutocomplete(){
-        $this->_autocomplete = null;
-    }
-
-    public function setStty(){
-        \Hoa\Console\System::execute('stty -echo -icanon min 1 time 0');
-    }
-
-    public function restoreStty(){
-        \Hoa\Console\System::execute('stty ' . $this->_oldStty);
-    }
     /**
      * Read a line from STDIN.
      *
@@ -510,6 +493,57 @@ class Readline {
     public function getPrefix ( ) {
 
         return $this->_prefix;
+    }
+
+    /**
+     * Set the STTY for Hoa\Console\Readline.
+     *
+     * @access  public
+     * @return  string
+     */
+    public function setStty(){
+        \Hoa\Console\System::execute('stty -echo -icanon min 1 time 0');
+    }
+
+    /**
+     * Restore the STTY to the original Settings
+     *
+     * @access  public
+     * @return  string
+     */
+    public function restoreStty(){
+        \Hoa\Console\System::execute('stty ' . $this->_oldStty);
+    }
+
+    /**
+     * Set the function to be called to get possible autocomplete results.
+     *
+     * @access public
+     * @param string|closure $function Function to be called to determine autocomplete 
+     */
+    public function setAutocomplete ( $function ) {
+        if(!is_callable($function)) throw new Exception('Not callable');
+        $this->_autocomplete = $function;
+        return;
+    }
+
+    /**
+     * Get the currently set function for autocomplete
+     *
+     * @access public
+     * @return string|closure
+     */
+    public function getAutocomplete () {
+        return $this->_autocomplete;
+    }
+
+    /**
+     * Unset the autocomplete function and disable autocomplete
+     *
+     * @access public
+     */
+    public function removeAutocomplete(){
+        $this->_autocomplete = null;
     }
 
     /**
@@ -850,6 +884,13 @@ class Readline {
         return static::STATE_BREAK;
     }
 
+    /**
+     * Tab binding.
+     *
+     * @access  public
+     * @param   \Hoa\Console\Readline  $self    Self.
+     * @return  int
+     */
     public function _bindTab( Readline $self){
         if(!$this->_autocomplete) return static::STATE_CONTINUE;
         $raw = $this->getLine();
@@ -921,7 +962,7 @@ class Readline {
      */
     public function __destruct ( ) {
 
-        \Hoa\Console\System::execute('stty ' . $this->_oldStty);
+        $this->restoreStty();
 
         return;
     }

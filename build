@@ -40,7 +40,20 @@ $phar->setStub($stub);
 rename($buildRoot.'/vzcontrol.phar',$buildRoot.'/vzcontrol');
 chmod($buildRoot.'/vzcontrol',0755);
 
-echo "Build complete.".PHP_EOL
-    ."To run now".PHP_EOL."\t ./out/vzcontrol.".PHP_EOL
-    ."Link to PATH".PHP_EOL."\t sudo ln ./out/vzcontrol /usr/bin/vzcontrol".PHP_EOL;
+
+
+if($argv[1] == 'install'){
+	echo "Installing to /usr/bin/vzcontrol".PHP_EOL;
+	if(!file_exists('/usr/bin/vzcontrol')){
+		exec('sudo ln -s '.escapeshellcmd(getcwd()).'/out/vzcontrol /usr/bin/vzcontrol');
+		echo "Link created in /usr/bin to ./out/vzcontrol".PHP_EOL;
+	}
+	else{
+		echo "Link already exists, skipping.".PHP_EOL;
+	}
+} else {
+	echo "Build complete.".PHP_EOL
+	    ."To run now".PHP_EOL."\t ./out/vzcontrol.".PHP_EOL
+	    ."Link to PATH".PHP_EOL."\t sudo ln -s ./out/vzcontrol /usr/bin/vzcontrol".PHP_EOL;
+}
 ?>

@@ -30,36 +30,36 @@ function putLine($line){
 }
 
 function autocompleterParse($pre,$cur){
-    global $servers;
-    global $function_mapping;
-
     if(strlen($pre)){
         $pCurrent = explode(' ',$pre);
         $func = $pCurrent[0];
-        if(!isset($function_mapping[$func]['auto'])){
+        if(!$auto_str = App::m('Actions')->getAuto($func)){
             return array();
         }
-        $auto_str = $function_mapping[$func]['auto'];
-        $autos = explode(' ',$auto_str);
-        $pres = explode(' ',$pre);
-        array_shift($pres);
+        $autos = exploder(' ',$auto_str);
+        $pres = exploder(' ',$pre);
         if(!isset($autos[count($pres)-1])) return array();
         $type = $autos[count($pres)-1];
         switch(substr($type,0,1)){
             case '$':
                 $var = substr($type,1);
-                if($var == 'host') $to_check = array_keys($servers);
-                elseif($var == 'ctid') $to_check = getCtidFor($pres[count($pres)-2]);
+                if($var == 'host') $to_check = App::m('Servers')->getServers();
+                elseif($var == 'ctid') $to_check = App::m('Servers')->getCtidFor($pres[count($pres)-1]);
                 elseif($var == 'template') $to_check = getOnlinetemplates(null);
+                else $to_check = array();
                 break;
             case '?':
                 $to_check = explode(',',substr($type,1));
                 break;
+            default:
+                $to_check = array();
+                break;
         }
     }else{
-        $to_check = array_keys($function_mapping);
+        $to_check = App::m('Actions')->getActions();
     }
 
+    if(!$to_check) return array();
     $curlen = strlen($cur);
     $matches = array();
     foreach($to_check as $item)
@@ -112,222 +112,7 @@ function returnSSH($server_name,$command){
     return $output;
 }
 
-function list_servers($args,$all=false){
-    global $servers;
-    
-    $servers_wanted = get_wanted_servers($args);
-    if(!$servers_wanted) return false;
 
-    foreach($servers_wanted as $server_name){
-        putHeader('Listing for '.$server_name);
-        if(!runSSH($server_name,'vzlist'.($all?' -a':''))){
-            putLine($server_name.' is not online');
-        }
-        putLine('');
-    }
-    return true;
-}
-
-function list_all_servers($args){
-    return list_servers($args,true);
-}
-
-function move_container($args,$live=false){
-    global $servers;
-
-    $args = explode(' ',$args);
-    if(count($args) !== 3){
-        putLine('Incorrect usage.');
-        return false;
-    }
-    $source = $args[0];
-    $ctid = $args[1];
-    $dest = $args[2];
-
-    if(!isset($servers[$source])){
-        putLine($source.' not found.');
-        return false;
-    }
-    elseif(!isset($servers[$dest])){
-        putLine($dest.' not found.');
-        return false;
-    }
-
-    putLine('Sending move command');
-    runSSH($source,'vzmigrate'.($live?' --online ':' ').$servers[$dest]['host'].' '.$ctid);
-    return true;
-}
-
-function move_container_online($args){
-    return move_container($args,true);
-}
-
-function stop_container($args){
-    global $servers;
-    $args = explode(' ',$args);
-    $host = $args[0];
-    $ctid = $args[1];
-
-    if(!isset($servers[$host])){
-        putLine($host.' is not known');
-        return false;
-    }
-
-    runSSH($host,'vzctl stop '.$ctid);
-    return true;
-}
-
-function start_container($args){
-    global $servers;
-    $args = explode(' ',$args);
-    $host = $args[0];
-    $ctid = $args[1];
-
-    if(!isset($servers[$host])){
-        putLine($host.' is not known');
-        return false;
-    }
-
-    runSSH($host,'vzctl start '.$ctid);
-
-    return true;
-}
-
-function restart_container($args){
-    global $servers;
-    $args = explode(' ',$args);
-    $host = $args[0];
-    $ctid = $args[1];
-
-    if(!isset($servers[$host])){
-        putLine($host.' is not known');
-        return false;
-    }
-
-    runSSH($host,'vzctl restart '.$ctid);
-
-    return true;
-}
-
-function enter_container($args){
-    global $servers;
-    $args = explode(' ',$args);
-    $host = $args[0];
-    $ctid = $args[1];
-
-    if(!isset($servers[$host])){
-        putLine($host.' is not known');
-        return false;
-    }
-
-    runSSH($host,'vzctl enter '.$ctid);
-
-    return true;
-}
-
-function create_container($args){
-    global $servers;
-    global $reader;
-    $args = trim($args);
-    if(!isset($servers[$args])){
-        putLine($args.' is not known');
-        return false;
-    }
-    global $___HOST;
-    $___HOST = $args;
-
-    $_oldAuto = $reader->getAutocomplete();
-    $reader->removeAutocomplete();
-    putLine('You will be prompted for a series of details.');
-    $ctid = $reader->readLine('CTID? ');
-    $reader->setAutocomplete(function($pre,$cur){
-        global $___HOST;
-        $templates = get_templates_for_host($___HOST);
-        $curlen = strlen($cur);
-        $matches = array();
-        foreach($templates as $item)
-            if(substr($item,0,$curlen) == $cur) $matches[] = $item;
-
-        return $matches;
-    });
-    $ostemplate = $reader->readLine('OS Template? ');
-    $reader->removeAutocomplete();
-    $ipaddr = $reader->readLine('IP Address? ');
-    $hostname = $reader->readLine('Hostname? ');
-    $nameserver = $reader->readLine('Nameserver? ');
-    $pReader = new Hoa\Console\Readline\Password;
-    $tries = 0;
-    do{
-        $rootPassword    =  $pReader->readLine('Root Password? ');
-        $confirmPassword =  $pReader->readLine('Confirm? ');
-        $tries++;
-    }while($tries <= 3 and !((!empty($rootPassword) and $rootPassword == $confirmPassword) or !putLine('Passwords did not match')));
-    if($tries > 3){
-        putLine('Quiting, password did not match');
-        return false;
-    }
-    putLine('Going to create a new container on '.$args);
-    putLine('CTID: '.$ctid);
-    putLine('OS Template: '.$ostemplate);
-    putLine('IP Address: '.$ipaddr);
-    putLine('Hostname: '.$hostname);
-    putLine('Nameserver: '.$nameserver);
-    $confirm = $reader->readLine('Are you sure you want to create this container? (y/N)> ');
-    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
-        return true;
-    }
-    $reader->setAutocomplete($_oldAuto);
-    putLine('Creating container');
-    if(!runSSH($args,'vzctl create '.$ctid.' --ostemplate '.$ostemplate))
-    {
-        putLine('Failed to create container');
-        return true;
-    }
-    runSSH($args,'vzctl set '.$ctid.' --ipadd '.$ipaddr.' --save');
-    runSSH($args,'vzctl set '.$ctid.' --nameserver '.$nameserver.' --save');
-    runSSH($args,'vzctl set '.$ctid.' --hostname '.$hostname.' --save');
-    runSSH($args,'vzctl set '.$ctid.' --userpasswd root:'.$rootPassword.' --save');
-
-    return true;
-}
-
-function destroy_container($args){
-    global $servers;
-    global $reader;
-    $args = explode(' ',$args);
-    $host = $args[0];
-    $ctid = $args[1];
-
-    if(!isset($servers[$host])){
-        putLine($host.' is not known');
-        return false;
-    }
-
-
-    $confirm = $reader->readLine('Are you sure you want to destroy '.$ctid.'? (y/N) ');
-    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
-        return true;
-    }
-
-    runSSH($host,'vzctl destroy '.$ctid);
-
-    return true;
-}
-
-function list_templates($args){
-    global $servers;
-
-    $servers_wanted = get_wanted_servers($args);
-    if(!$servers_wanted) return false;
-
-    foreach($servers_wanted as $server_name){
-        putHeader('Listing Templates for '.$server_name);
-        runSSH($server_name,'ls /vz/template/cache | sed s/.tar.gz//');
-        putLine('');
-    }
-
-    return true;
-}
 
 function get_templates_for_host($host){
     global $servers;
@@ -338,20 +123,7 @@ function get_templates_for_host($host){
     return $templates;
 }
 
-function uptime($args){
-    global $servers;
 
-    $servers_wanted = get_wanted_servers($args);
-    if(!$servers_wanted) return false;
-
-    foreach($servers_wanted as $server_name){
-        putHeader('Uptime for '.$server_name);
-        runSSH($server_name,'uptime');
-        putLine('');
-    }
-
-    return true;
-}
 
 function get_wanted_servers($args){
     global $servers;
@@ -372,22 +144,7 @@ function get_wanted_servers($args){
     return $servers_wanted;
 }
 
-function list_online_templates($args){
-    $url = 'download.openvz.org';
-    $folder = 'template/precreated/';
-    if(strlen($args)) $folder .= $args.'/';
-    $conn = ftp_connect($url);
-    $log = ftp_login($conn, 'anonymous','anonymous');
-    $file_list = ftp_nlist($conn, $folder);
-    $file_list = array_filter($file_list,function($o){ return preg_match('/\.tar\.gz$/', $o); });
-    array_walk($file_list,function(&$o,$key,$folder){ $o = substr($o,strlen($folder)); $o = substr($o,0,strlen($o)-7); },$folder);
-    putLine('All templates online');
-    foreach($file_list as $file){
-        putLine($file);
-    }
 
-    return true;
-}
 
 function getOnlinetemplates($args){
     $url = 'download.openvz.org';
@@ -402,144 +159,7 @@ function getOnlinetemplates($args){
     return $file_list;
 }
 
-function download_template($args){
-    global $servers;
-    $url = 'download.openvz.org';
-    $folder = 'template/precreated/';
-    $args = explode(' ',$args);
-    $host = $args[0];
-    $template = $args[1];
-    if(isset($args[2])) $folder .= $args[2].'/';
 
-    if(!isset($servers[$host])){
-        putLine($host.' is not known');
-        return false;
-    }
-
-    putLine('Downloading requested template');
-    runSSH($host,'wget http://'.$url.'/'.$folder.'/'.$template.'.tar.gz -O /vz/template/cache/'.$template.'.tar.gz --progress=bar:force');
-
-    return true;
-}
-
-function shutdown_host($args){
-    global $servers;
-    global $reader;
-
-    
-    $servers_wanted = get_wanted_servers($args);
-    if(!$servers_wanted) return false;
-
-    $confirm = $reader->readLine('Are you sure you want to shutdown '.implode(', ',$servers_wanted).'? (y/N)> ');
-    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
-        return true;
-    }
-
-    foreach($servers_wanted as $server_name){
-        putLine('Shutting down '.$server_name);
-        runSSH($server_name,'shutdown -h now');
-        putLine('');
-    }
-
-    return true;
-}
-
-function reboot_host($args){
-    global $servers;
-    global $reader;
-
-    $servers_wanted = get_wanted_servers($args);
-    if(!$servers_wanted) return false;
-
-    $confirm = $reader->readLine('Are you sure you want to reboot '.$args.'? (y/N)> ');
-    if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
-        return true;
-    }
-
-    foreach($servers_wanted as $server_name){
-        putLine('Rebooting '.$server_name);
-        runSSH($server_name,'reboot');
-        putLine('');
-    }
-    
-    return true;
-}
-
-function set_option($args){
-    global $servers;
-    global $reader;
-
-    $araw = exploder(' ',$args);
-    if(count($araw) != 3) return false;
-
-    $host = $araw[0];
-    $ctid = $araw[1];
-    $command = $araw[2];
-
-    if(!isset($servers[$host])) return false;
-
-    switch($command){
-        case 'memory':
-            $ram = $reader->readLine('Amount of RAM?> ');
-            $burst = $reader->readLine('Burstable RAM?> ');
-            runSSH($host,'vzctl set '.$ctid.' --vmguarpages '.$ram.' --save');
-            runSSH($host,'vzctl set '.$ctid.' --oomguarpages '.$ram.' --save');
-            runSSH($host,'vzctl set '.$ctid.' --privvmpages '.$ram.':'.$burst.' --save');
-            return true;
-            break;
-        case 'autoboot':
-            $c = $reader->readLine('Start on Boot? (y/N)> ');
-            $b = in_array($c,array('y','Y','yes','Yes','YES'));
-            runSSH($host,'vzctl set '.$ctid.' --onboot '.($b?'yes':'no').' --save');
-            return true;
-            break;
-        case 'cpuunit':
-            $units = $reader->readLine('# of units?> ');
-            runSSH($host,'vzctl set '.$ctid.' --cpuunits '.$units.' --save');
-            return true;
-            break;
-        case 'cpulimit':
-            $perc = $reader->readLine('Max CPU Usage (%)?> ');
-            runSSH($host,'vzctl set '.$ctid.' --cpulimit '.$perc.' --save');
-            return true;
-            break;
-        case 'diskquota':
-            $c = $reader->readLine('Enable Disk Quotes? (y/N)> ');
-            $b = in_array($c,array('y','Y','yes','Yes','YES'));
-            runSSH($host,'vzctl set '.$ctid.' --diskquota '.($b?'yes':'no').' --save');
-            return true;
-            break;
-        case 'diskspace':
-            $units = $reader->readLine('Diskspace?> ');
-            runSSH($host,'vzctl set '.$ctid.' --diskspace '.$units.' --save');
-            return true;
-        case 'ipadd':
-            $ip = $reader->readLine('IP to add?> ');
-            runSSH($host,'vzctl set '.$ctid.' --ipadd '.$ip.' --save');
-            return true;
-        case 'ipdel':
-            $ip = $reader->readLine('IP to add?> ');
-            runSSH($host,'vzctl set '.$ctid.' --ipdel '.$ip.' --save');
-            return true;
-            break;
-    }
-
-    return false;
-}
-
-function see_options($args){
-    global $servers;
-    
-    $araw = exploder(' ',$args);
-    if(count($araw) != 2) return false;
-
-    $host = $araw[0];
-    $ctid = $araw[1];
-
-    if(!isset($servers[$host])) return false;
-
-    return runSSH($host,'cat /etc/vz/conf/'.$ctid.'.conf');
-}
 
 function exploder($d,$s){
     $ar = explode($d,$s);
@@ -547,61 +167,9 @@ function exploder($d,$s){
     return $ar;
 }
 
-function raw($args){
-    global $servers;
-    $args = explode(' ',$args,2);
-    $host = $args[0];
-    $command = $args[1];
 
-    if(!isset($servers[$host])){
-        putLine($host.' is not known');
-        return false;
-    }
 
-    runSSH($host,$command);
 
-    return true;
-}
-
-function help($args){
-    global $function_mapping;
-    if(strlen($args)){
-        if(isset($function_mapping[$args])){
-            $command = $args;
-            $info = $function_mapping[$args];
-            putLine($command.' '.$info['usage']);
-            putLine("\t".$info['desc']);
-            putLine('');
-        }
-        elseif($args == 'all'){
-            foreach($function_mapping as $command=>$info){
-                putLine($command.' '.$info['usage']);
-                putLine("\t".$info['desc']);
-                putLine('');
-            }
-        }
-        else{
-            putLine('Help for command not found');
-        }
-    }
-    else{
-        foreach($function_mapping as $command=>$info){
-            putLine($command.' '.$info['usage']);
-        }
-    }
-    return true;
-}
-
-function clear_screen($args){
-    system('clear');
-    return true;
-}
-
-function quit_program($args){
-    global $reader;
-    unset($reader);
-    exit(1);
-}
 
 function showBanner(){
     putLine('######################################');
