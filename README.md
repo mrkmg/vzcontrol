@@ -64,8 +64,8 @@ Installation
     - `./vzcontrol make` This creates a config file at `~/.vzcontrol.conf`
 4. Put all the servers in your cluster into the config file (See Configuration Below) or add them via the vzcontrol interface
 5. *Optional* Symlink the script to PATH
-    - `sudo ln /path/to/repo/out/vzcontrol /usr/bin/vzcontrol` If cloned from repo
-    - `sudo ln /path/to/downloads/vzcontrol /usr/bin/vzcontrol` If downloaded only the script
+    - `sudo ln -s /path/to/repo/out/vzcontrol /usr/bin/vzcontrol` If cloned from repo
+    - `sudo ln -s /path/to/downloads/vzcontrol /usr/bin/vzcontrol` If downloaded only the script
 6. Run vzcontrol
     - `./out/vzcontrol` If cloned from repo
     - `./vzcontrol` If downloaded
