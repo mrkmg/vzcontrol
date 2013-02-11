@@ -28,11 +28,12 @@ class Servers {
     private $ctids = array();
 
 
-    public function addServer($server,$host,$port=22){
+    public function addServer($server,$host,$port=22,$user='root'){
         if(isset($this->servers[$server])) return false;
         $this->servers[$server] = array();
         $this->servers[$server]['host'] = $host;
         if($port!=22) $this->servers[$server]['port'] = $port;
+        if($user!='root') $this->servers[$server]['user'] = $user;
         return true;
     }
 
@@ -83,6 +84,12 @@ class Servers {
         if(!isset($this->servers[$host])) return false;
         if(!isset($this->servers[$host]['host'])) return false;
         return $this->servers[$host]['host'];
+    }
+
+    public function getUserFor($host){
+        if(!isset($this->servers[$host])) return false;
+        if(!isset($this->servers[$host]['user'])) return 'root';
+        return $this->servers[$host]['user'];
     }
 
     public function getCtidFor($host){
