@@ -56,4 +56,6 @@ if(isset($argv[1]) && $argv[1] == 'install'){
 	    ."To run now".PHP_EOL."\t ./out/vzcontrol.".PHP_EOL
 	    ."Link to PATH".PHP_EOL."\t sudo ln -s ./out/vzcontrol /usr/bin/vzcontrol".PHP_EOL;
 }
+
+exit(0);
 ?>
