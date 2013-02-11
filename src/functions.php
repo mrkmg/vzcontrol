@@ -178,21 +178,17 @@ function showBanner(){
     putLine('#                                    #');
     putLine('# Created By MrKMG <kevin@mrkmg.com> #');
     putLine('# Type `help` to start               #');
-    putLine('#                             v0.2.2 #');
+    putLine('#                             v0.5.2 #');
     putLine('######################################');
     putLine('');
 }
 
-function writeINIFile($location){
-    file_put_contents($location,
-'; This is a VzControl configuration file
+function writeInitialINIFile($location){
+    return file_put_contents($location,
+'; This is a VZControl configuration file
 
-[server1]
-host = server1.domain
-
-[server2]
-host = 1.2.3.4
-port = 2222
+[local]
+host = 127.0.0.1
 '
 );
 }

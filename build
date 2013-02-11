@@ -42,7 +42,7 @@ chmod($buildRoot.'/vzcontrol',0755);
 
 
 
-if($argv[1] == 'install'){
+if(isset($argv[1]) && $argv[1] == 'install'){
 	echo "Installing to /usr/bin/vzcontrol".PHP_EOL;
 	if(!file_exists('/usr/bin/vzcontrol')){
 		exec('sudo ln -s '.escapeshellcmd(getcwd()).'/out/vzcontrol /usr/bin/vzcontrol');

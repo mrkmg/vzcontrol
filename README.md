@@ -1,4 +1,4 @@
-VzControl - v0.5.1
+VZControl - v0.5.2
 =========
 
 A CLI enviroment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
@@ -64,8 +64,8 @@ Installation
     - `./vzcontrol make` This creates a config file at `~/.vzcontrol.conf`
 4. Put all the servers in your cluster into the config file (See Configuration Below) or add them via the vzcontrol interface
 5. *Optional* Symlink the script to PATH
-    - `sudo ln ./out/vzcontrol /usr/bin/vzcontrol` If cloned from repo
-    - `sudo ln .vzcontrol /usr/bin/vzcontrol` If downloaded only the script
+    - `sudo ln /path/to/repo/out/vzcontrol /usr/bin/vzcontrol` If cloned from repo
+    - `sudo ln /path/to/downloads/vzcontrol /usr/bin/vzcontrol` If downloaded only the script
 6. Run vzcontrol
     - `./out/vzcontrol` If cloned from repo
     - `./vzcontrol` If downloaded
@@ -91,13 +91,22 @@ vzcontrol uses a configuration file to determine which servers it is able to adm
     [server3]
     host = 1.2.3.4
 
-You can also dynamically create this file via the vzcontrol command interface. For example, if you are starting from the sample file created:
+You can also dynamically create this file via the vzcontrol command interface. For example, if you are starting from scratch.
 
-    VzControl> removeserver server1
-    VzControl> removeserver server2
-    VzControl> addserver name1 host.domain
-    VzControl> addserver name2 1.2.4.5 2222
-    VzControl> writeconfig
+    mrkmg$ vzcontrol make
+    ######################################
+    #             VZControl              #
+    #           OpenVZ Manager           #
+    #                                    #
+    # Created By MrKMG <kevin@mrkmg.com> #
+    # Type `help` to start               #
+    #                             v0.5.2 #
+    ######################################
+
+    VZControl> removeserver local
+    VZControl> addserver name1 host.domain
+    VZControl> addserver name2 1.2.4.5 2222
+    VZControl> writeconfig
 
 The about command remove the sample servers added, adds two new servers, and then writes the config file.
 
@@ -120,15 +129,15 @@ Building
 1. Clone the repo `git clone https://github.com/mrkmg/vzcontrol.git`
 2. Enter Dir `cd vzcontrol`
 4. Build `./build`
-5. *Optional* Symlink the script to PATH eg. `sudo ln ./out/vzcontrol /usr/bin/vzcontrol`
+5. *Optional* Symlink the script to PATH eg. `sudo ln /path/to/repo/out/vzcontrol /usr/bin/vzcontrol`
 
 Usage
 -----
 
 After you have built and configured vzcontrol, you can launch it from the out directory.
 
-    If you did symlink the script: `vzcontrol`
-    If you did not symlink: `./out/vzcontrol`
+If you did symlink the script: `vzcontrol`  
+If you did not symlink: `./out/vzcontrol`
 
 Here is a list of all commands
 
