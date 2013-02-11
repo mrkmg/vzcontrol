@@ -1,14 +1,14 @@
 VZControl - v0.5.2
 =========
 
-A CLI enviroment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
+A CLI environment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
 php5, and uses standard tools such as vzctl and vzmigrate to facilitate all actions.
 
 Overview
 --------
 
 VzControl is run from a command line, and gives you an interface to perform actions very easily. All commands are
-based on the standard *nix utility names, so the learning curve should be mininal. The actions include
+based on the standard *nix utility names, so the learning curve should be minimal. The actions include
 the following and more.
 
 - List containers on some/all OpenVZ Hosts
@@ -18,7 +18,7 @@ the following and more.
 - Create a new container
 - Shutdown/Reboot an OpenVZ Host
 - Run custom commands on an OpenVZ Host
-- Tab autocomplete of commands and container completion
+- Tab auto-complete of commands and container completion
 
 Prerequisites
 ------------
@@ -151,13 +151,13 @@ Here is a list of all commands
         List templates on OpenVZ Host(s)
 
     lsot [SECTION]
-        List avaliable template for download. Sections include beta, old, and contrib
+        List available template for download. Sections include beta, old, and contrib
 
     install HOST TEMPLATE [SECTION]
         Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib
 
     mv CURENTHOST CTID DESTHOST
-        Perform an offline migration of containter CTID on CURRENTHOST to DESTHOST
+        Perform an offline migration of container CTID on CURRENTHOST to DESTHOST
 
     mvo CURRENTHOST CTID DESTHOST
         Perform an online migration of container CTID on CURRENTHOST to DESTHOST
@@ -172,19 +172,19 @@ Here is a list of all commands
         Start container CTID on HOST
 
     stop HOST CTID
-        Stop containter CTID on HOST
+        Stop container CTID on HOST
 
     restart HOST CTID
-        Restart containter CTID on HOST
+        Restart container CTID on HOST
 
     enter HOST CTID
-        Enter containter CTID on HOST
+        Enter container CTID on HOST
 
     create HOST
         Create a new container on HOST
 
     rm HOST CTID
-        Destroy containter CTID on HOST
+        Destroy container CTID on HOST
 
     reboot HOST [HOST] ...
         Reboot OpenVZ Host(s)

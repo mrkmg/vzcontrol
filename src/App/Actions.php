@@ -46,7 +46,7 @@ class Actions {
             'lsot'=>array(
                 'func'=>'list_online_templates',
                 'usage'=>'[SECTION]',
-                'desc'=>'List avaliable template for download. Sections include beta, old, and contrib',
+                'desc'=>'List available template for download. Sections include beta, old, and contrib',
                 'auto'=>'?beta,old,contrib'
             ),
             'install'=>array(
@@ -58,7 +58,7 @@ class Actions {
             'mv'=>array(
                 'func'=>'move_container',
                 'usage'=>'CURENTHOST CTID DESTHOST',
-                'desc'=>'Perform an offline migration of containter CTID on CURRENTHOST to DESTHOST',
+                'desc'=>'Perform an offline migration of container CTID on CURRENTHOST to DESTHOST',
                 'auto'=>'$host $ctid $host'
             ),
             'mvo'=>array(
@@ -89,19 +89,19 @@ class Actions {
             'stop'=>array(
                 'func'=>'stop_container',
                 'usage'=>'HOST CTID',
-                'desc'=>'Stop containter CTID on HOST',
+                'desc'=>'Stop container CTID on HOST',
                 'auto'=>'$host $ctid'
             ),
             'restart'=>array(
                 'func'=>'restart_container',
                 'usage'=>'HOST CTID',
-                'desc'=>'Restart containter CTID on HOST',
+                'desc'=>'Restart container CTID on HOST',
                 'auto'=>'$host $ctid'
             ),
             'enter'=>array(
                 'func'=>'enter_container',
                 'usage'=>'HOST CTID',
-                'desc'=>'Enter containter CTID on HOST',
+                'desc'=>'Enter container CTID on HOST',
                 'auto'=>'$host $ctid'
             ),
             'create'=>array(
@@ -113,7 +113,7 @@ class Actions {
             'rm'=>array(
                 'func'=>'destroy_container',
                 'usage'=>'HOST CTID',
-                'desc'=>'Destroy containter CTID on HOST',
+                'desc'=>'Destroy container CTID on HOST',
                 'auto'=>'$host $ctid'
             ),
             'reboot'=>array(
