@@ -16,7 +16,7 @@ Table of Contents
 - [Building](#building)
 
 Overview
-========
+--------
 
 VzControl is run from a command line, and gives you an interface to perform actions very easily. All commands are
 based on the standard *nix utility names, so the learning curve should be minimal. The actions include
