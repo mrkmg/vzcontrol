@@ -4,8 +4,19 @@ VZControl - v0.5.2
 A CLI environment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
 php5, and uses standard tools such as vzctl and vzmigrate to facilitate all actions.
 
+
+Table of Contents
+-----------------
+
+- [Overview](#overview)
+- [Quick Start](#quick-start-debian)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Building](#building)
+
 Overview
---------
+========
 
 VzControl is run from a command line, and gives you an interface to perform actions very easily. All commands are
 based on the standard *nix utility names, so the learning curve should be minimal. The actions include
@@ -19,6 +30,66 @@ the following and more.
 - Shutdown/Reboot an OpenVZ Host
 - Run custom commands on an OpenVZ Host
 - Tab auto-complete of commands and container completion
+
+
+Quick Start (Debian)
+--------------------
+
+Install php5 pear
+
+    apt-get install php5-cli php-pear php5-dev build-essential libpcre3-dev
+    pecl install --alldeps phar
+
+Edit suhosin to allow phar and hoa to run
+
+    nano /etc/php/conf.d/suhosin.ini
+
+Change `;suhosin.executor.include.whitelist = `  
+to `suhosin.executor.include.whitelist = "phar,hoa"`
+
+Download vzcontrol (compiled)  
+`wget https://raw.github.com/mrkmg/vzcontrol/master/out/vzcontrol`
+
+Make vzcontrol executable  
+`chmod +x vzcontrol`
+
+Create the default config file
+
+    mrkmg$ ./vcontrol make
+
+If you are running this on a machine that is not one of your OpenVZ Hosts, remove the default server
+
+    VZControl> removeserver local
+
+Add in your servers
+
+    VZControl> addserver serv1 full.host.name
+    VZControl> addserver serv2 1.2.3.4
+    VZControl> addserver serv3 1.2.3.5 1222   #Uses port 1222 for SSH
+
+Write the config
+
+    VZControl> writeconfig
+
+List running containers on all hosts
+
+    VZControl> ls
+
+List all containers on all hosts
+
+    VZControl> lsa
+
+List running containers on serv1
+
+    VZControl> ls serv1
+
+Download a new template to serv3
+
+    VZControl> install serv3 debian-6.0_X86_64
+
+View a detailed list of all commands
+
+    VZControl> help all
 
 Prerequisites
 ------------
