@@ -146,3 +146,4 @@ class Version extends \Hoa\Console\Dispatcher\Kit {
 
 __halt_compiler();
 Informations about versions.
+?>

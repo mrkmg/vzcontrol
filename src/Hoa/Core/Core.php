@@ -532,3 +532,4 @@ class_alias('Hoa\Core\Core', 'Hoa\Core');
 \Hoa\Core::getInstance()->initialize();
 
 }
+?>

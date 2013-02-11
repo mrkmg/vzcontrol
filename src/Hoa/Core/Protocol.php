@@ -1060,3 +1060,4 @@ function resolve ( $path, $exists = true, $unfold = false ) {
 stream_wrapper_register('hoa', '\Hoa\Core\Protocol\Wrapper');
 
 }
+?>

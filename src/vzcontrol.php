@@ -22,12 +22,13 @@
  *
  */
 
-require 'Hoa/Core/Core.php';
-require 'Hoa/Console/Readline/Readline.php';
-require 'Hoa/Console/Readline/Password.php';
-require 'App/App.php';
-require 'functions.php';
-
+if(!defined('BUILT')){
+    require 'Hoa/Core/Core.php';
+    require 'Hoa/Console/Readline/Readline.php';
+    require 'Hoa/Console/Readline/Password.php';
+    require 'App/App.php';
+    require 'functions.php';
+}
 
 $doMake = false;
 $config_file = false;

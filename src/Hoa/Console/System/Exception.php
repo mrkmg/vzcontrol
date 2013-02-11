@@ -60,3 +60,4 @@ namespace Hoa\Console\System {
 class Exception extends \Hoa\Console\Exception { }
 
 }
+?>

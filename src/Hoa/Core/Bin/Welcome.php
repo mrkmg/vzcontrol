@@ -219,3 +219,4 @@ class Welcome extends \Hoa\Console\Dispatcher\Kit {
 
 __halt_compiler();
 This page.
+?>

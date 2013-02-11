@@ -33,7 +33,7 @@ class App {
     }
     
     static function addModule($name){
-        require_once 'App/'.$name.'.php';
+        if(!class_exists($name)) require_once 'App/'.$name.'.php';
         self::$_modules[$name] = new $name;
     }
 
@@ -49,3 +49,4 @@ class App {
         return self::$_reader;
     }
 }
+?>

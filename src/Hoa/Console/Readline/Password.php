@@ -68,3 +68,4 @@ class Password extends Readline {
 }
 
 }
+?>

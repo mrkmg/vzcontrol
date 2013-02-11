@@ -423,3 +423,4 @@ set_exception_handler(array('\Hoa\Core\Exception\Idle', 'uncaught'));
 set_error_handler(array('\Hoa\Core\Exception\Idle', 'error'));
 
 }
+?>

@@ -49,3 +49,4 @@ namespace Hoa\Console {
 class Exception extends \Hoa\Core\Exception { }
 
 }
+?>

@@ -334,3 +334,4 @@ class Kit extends \Hoa\Dispatcher\Kit {
 }
 
 }
+?>

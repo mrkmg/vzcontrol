@@ -261,3 +261,4 @@ namespace {
 class_alias('Hoa\Core\Data\Data', 'Hoa\Core\Data');
 
 }
+?>

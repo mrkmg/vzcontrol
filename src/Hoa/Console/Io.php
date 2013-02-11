@@ -261,3 +261,4 @@ function cout ( $out = null, $ln = \Hoa\Console\Io::NEW_LINE,
 }}
 
 }
+?>

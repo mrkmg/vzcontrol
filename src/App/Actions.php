@@ -134,6 +134,12 @@ class Actions {
                 'desc'=>'Get uptime for OpenVZ Host(s)',
                 'auto'=>'$host $host $host $host $host'
             ),
+            'tops'=>array(
+                'func'=>'tops',
+                'usage'=>'[HOST] [HOST] ...',
+                'desc'=>'Get the top for OpenVZ Host(s)',
+                'auto'=>'$host $host $host $host $host'
+            ),
             'clear'=>array(
                 'func'=>'clear_screen',
                 'usage'=>'',
@@ -143,7 +149,7 @@ class Actions {
                 'func'=>'raw',
                 'usage'=>'HOST COMMAND',
                 'desc'=>'Runs COMMAND on HOST',
-                'auto'=>'$host $ctid'
+                'auto'=>'$host'
             ),
             'quit'=>array(
                 'func'=>'quit_program',
@@ -176,6 +182,11 @@ class Actions {
                 'func'=>'write_config',
                 'usage'=>'',
                 'desc'=>'Writes the vzcontrol config file. Use after you add or remove servers'
+            ),
+            'showconfig'=>array(
+                'func'=>'show_config',
+                'usage'=>'',
+                'desc'=>'Displays the VZControl config contents.'    
             )
         );
 
@@ -443,6 +454,20 @@ class Actions {
         return true;
     }
 
+    private function tops($args){
+        if(!$servers_wanted = App::m('Servers')->parseListOfServers($args)) return false;
+
+        foreach($servers_wanted as $server_name){
+            putHeader('Uptime for '.$server_name);
+            $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'top -n 5');
+            system('clear');
+            if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
+            putLine('');
+        }
+
+        return true;
+    }
+
     private function list_online_templates($args){
         $url = 'download.openvz.org';
         $folder = 'template/precreated/';
@@ -630,7 +655,7 @@ class Actions {
         $host = $args[0];
         $command = $args[1];
 
-        if(!$uri == App::m('Servers')->getUriFor($host)){
+        if(!$uri = App::m('Servers')->getUriFor($host)){
             putLine('Host does not exist');
             return false;
         }
@@ -654,4 +679,11 @@ class Actions {
         file_put_contents($_SERVER['HOME'].'/.vzcontrol.conf', App::m('Servers')->getIni());
         return true;
     }
+
+    private function show_config($args){
+        putLine('');
+        putLine(App::m('Servers')->getIni());
+        return true;
+    }
 }
+?>

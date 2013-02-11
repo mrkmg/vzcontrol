@@ -522,3 +522,4 @@ function event ( $eventId ) {
 class_alias('Hoa\Core\Event\Event', 'Hoa\Core\Event');
 
 }
+?>

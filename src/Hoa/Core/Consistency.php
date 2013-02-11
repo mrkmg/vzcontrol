@@ -1088,3 +1088,4 @@ spl_autoload_register('\Hoa\Core\Consistency::autoload');
 Hoa\Core\Consistency::enableImportWhenUnserializing();
 
 }
+?>

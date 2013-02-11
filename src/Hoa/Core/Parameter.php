@@ -720,3 +720,4 @@ namespace {
 class_alias('Hoa\Core\Parameter\Parameter', 'Hoa\Core\Parameter');
 
 }
+?>

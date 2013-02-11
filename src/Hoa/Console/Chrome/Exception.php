@@ -60,3 +60,4 @@ namespace Hoa\Console\Chrome {
 class Exception extends \Hoa\Console\Exception { }
 
 }
+?>
