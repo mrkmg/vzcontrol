@@ -25,6 +25,11 @@
 
 class Servers {
     private $servers = array();
+    private $params = array(
+        'host',
+        'port',
+        'user'
+    );
     private $ctids = array();
 
 
@@ -34,6 +39,13 @@ class Servers {
         $this->servers[$server]['host'] = $host;
         if($port!=22) $this->servers[$server]['port'] = $port;
         if($user!='root') $this->servers[$server]['user'] = $user;
+        return true;
+    }
+
+    public function editServer($server,$option,$value){
+        if(!isset($this->servers[$server])) return false;
+        if(!in_array($option, $this->params)) return false;
+        $this->servers[$server][$option] = $value;
         return true;
     }
 
@@ -48,13 +60,13 @@ class Servers {
     }
 
     public function getIni(){
-        $ini = '; This is a VZControl configuration file'.PHP_EOL;
+        $ini = '; This is a VZControl configuration file'.newLine();
         foreach($this->servers as $name=>$options){
-            $ini .= '['.$name.']'.PHP_EOL;
+            $ini .= '['.$name.']'.newLine();
             foreach($options as $k=>$v){
-                $ini .= $k.' = '.$v.PHP_EOL;
+                $ini .= $k.' = '.$v.newLine();
             }
-            $ini .= PHP_EOL;
+            $ini .= newLine();
         }
         return $ini;
     }
@@ -83,7 +95,7 @@ class Servers {
     public function getUriFor($host){
         if(!isset($this->servers[$host])) return false;
         if(!isset($this->servers[$host]['host'])) return false;
-        return $this->servers[$host]['host'];
+        return $this->getUserFor($host).'@'.$this->servers[$host]['host'];
     }
 
     public function getUserFor($host){

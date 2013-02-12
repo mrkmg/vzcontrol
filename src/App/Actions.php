@@ -167,21 +167,27 @@ class Actions {
                 'desc'=>'Show this help page',
                 'auto'=>'$func'
             ),
-            'addserver'=>array(
+            'addhost'=>array(
                 'func'=>'add_server',
-                'usage'=>'NAME HOST [PORT]',
-                'desc'=>'Add a server to the configuration'
+                'usage'=>'NAME HOST [PORT] [USER]',
+                'desc'=>'Add a host to the configuration (Defaults: Port 22, User root)'
             ),
-            'removeserver'=>array(
+            'removehost'=>array(
                 'func'=>'remove_server',
                 'usage'=>'NAME',
-                'desc'=>'Remove a server to the configuration',
+                'desc'=>'Remove a host to the configuration',
                 'auto'=>'$host'
+            ),
+            'edithost'=>array(
+                'func'=>'edit_server',
+                'usage'=>'HOST OPTION VALUE',
+                'desc'=>'Modify a host. Options are "host, port, user"',
+                'auto'=>'$host ?host,port,user'
             ),
             'writeconfig'=>array(
                 'func'=>'write_config',
                 'usage'=>'',
-                'desc'=>'Writes the vzcontrol config file. Use after you add or remove servers'
+                'desc'=>'Writes the vzcontrol config file. Use after you add, edit, or remove hosts'
             ),
             'showconfig'=>array(
                 'func'=>'show_config',
@@ -223,7 +229,7 @@ class Actions {
             if(App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'vzlist'.($all?' -a':'')) == SSH::SSH_FAILED){
                 putLine($server_name.' is not online');
             }
-            putLine('');
+            echo newLine();
         }
         return true;
     }
@@ -435,7 +441,7 @@ class Actions {
             putHeader('Listing Templates for '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'ls /vz/template/cache | sed s/.tar.gz//');
             if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            putLine('');
+            echo newLine();
         }
 
         return true;
@@ -448,7 +454,7 @@ class Actions {
             putHeader('Uptime for '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'uptime');
             if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            putLine('');
+            echo newLine();
         }
 
         return true;
@@ -462,7 +468,7 @@ class Actions {
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'top -n 5');
             system('clear');
             if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            putLine('');
+            echo newLine();
         }
 
         return true;
@@ -517,7 +523,7 @@ class Actions {
             putLine('Shutting down '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'shutdown -h now');
             if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            putLine('');
+            echo newLine();
         }
 
         return true;
@@ -535,7 +541,7 @@ class Actions {
             putLine('Rebooting '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'reboot');
             if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            putLine('');
+            echo newLine();
         }
         
         return true;
@@ -620,13 +626,13 @@ class Actions {
                 $info = $this->map[$args];
                 putLine($command.' '.$info['usage']);
                 putLine("\t".$info['desc']);
-                putLine('');
+                echo newLine();
             }
             elseif($args == 'all'){
                 foreach($this->map as $command=>$info){
                     putLine($command.' '.$info['usage']);
                     putLine("\t".$info['desc']);
-                    putLine('');
+                    echo newLine();
                 }
             }
             else{
@@ -667,8 +673,20 @@ class Actions {
 
     private function add_server($args){    
         $args = App::m('Utils')->exploder(' ',$args);
+        $cargs = count($args);
+        if($cargs == 2) return App::m('Servers')->addServer($args[0],$args[1]);
+        elseif($cargs == 3) return App::m('Servers')->addServer($args[0],$args[1],$args[2]);
+        elseif($cargs == 4) return App::m('Servers')->addServer($args[0],$args[1],$args[2],$args[3]);
+        else return false;
+    }
 
-        return App::m('Servers')->addServer($args[0],$args[1]);
+    private function edit_server($args){
+        $args = App::m('Utils')->exploder(' ',$args);
+        if(count($args) != 3) return false;
+        $server = $args[0];
+        $option = $args[1];
+        $value = $args[2];
+        return App::m('Servers')->editServer($server,$option,$value);
     }
 
     private function remove_server($args){ 
@@ -681,7 +699,7 @@ class Actions {
     }
 
     private function show_config($args){
-        putLine('');
+        echo newLine();
         putLine(App::m('Servers')->getIni());
         return true;
     }

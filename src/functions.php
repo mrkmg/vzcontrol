@@ -25,8 +25,12 @@
 
 
 function putLine($line){
-    echo $line.PHP_EOL;
+    echo $line.newLine();
     return true;
+}
+
+function newLine(){
+    return PHP_EOL;
 }
 
 function autocompleterParse($pre,$cur){

@@ -24,7 +24,6 @@
  */
 
 class SSH {
-
     const RESULT_GOOD=0;
     const COMMAND_FAILED=1;
     const SSH_FAILED=255;
@@ -32,7 +31,7 @@ class SSH {
     public function run($uri,$command){
         App::reader()->restoreStty();
         $command = 'ssh -q -t'
-                 . ' -o ConnectTimeout=2 root@'
+                 . ' -o ConnectTimeout=2 '
                  . $uri
                  . ' "'.str_replace('"','\\"',$command).'"';
         passthru($command,$return);
@@ -42,7 +41,7 @@ class SSH {
 
     public function ret($uri,$command){
         $command = 'ssh -q '
-                 . ' -o ConnectTimeout=2 root@'
+                 . ' -o ConnectTimeout=2 '
                  . $uri
                  . ' "'.str_replace('"','\\"',$command).'"';
         $output = shell_exec($command);

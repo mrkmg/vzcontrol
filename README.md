@@ -1,4 +1,4 @@
-VZControl - v0.5.2
+VZControl - v0.5.3
 =========
 
 A CLI environment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
@@ -59,13 +59,13 @@ Create the default config file
 
 If you are running this on a machine that is not one of your OpenVZ Hosts, remove the default server
 
-    VZControl> removeserver local
+    VZControl> removehost local
 
-Add in your servers
+Add in your hosts
 
-    VZControl> addserver serv1 full.host.name
-    VZControl> addserver serv2 1.2.3.4
-    VZControl> addserver serv3 1.2.3.5 1222   #Uses port 1222 for SSH
+    VZControl> addhost serv1 full.host.name
+    VZControl> addhost serv2 1.2.3.4
+    VZControl> addhost serv3 1.2.3.5 1222   #Uses port 1222 for SSH
 
 Write the config
 
@@ -174,9 +174,9 @@ You can also dynamically create this file via the vzcontrol command interface. F
     #                             v0.5.2 #
     ######################################
 
-    VZControl> removeserver local
-    VZControl> addserver name1 host.domain
-    VZControl> addserver name2 1.2.4.5 2222
+    VZControl> removehost local
+    VZControl> addhost name1 host.domain
+    VZControl> addhost name2 1.2.4.5 2222
     VZControl> writeconfig
 
 The about command remove the sample servers added, adds two new servers, and then writes the config file.
@@ -266,6 +266,9 @@ Here is a list of all commands
     uptime [HOST] [HOST] ...
         Get uptime for OpenVZ Host(s)
 
+    tops [HOST] [HOST] ...
+        Get the top for OpenVZ Host(s)
+
     clear 
         clears all output on screen
 
@@ -281,11 +284,17 @@ Here is a list of all commands
     help [COMMAND]
         Show this help page
 
-    addserver NAME HOST [PORT]
-        Add a server to the configuration
+    addhost NAME HOST [PORT] [USER]
+        Add a host to the configuration (Defaults: Port 22, User root)
 
-    removeserver NAME
-        Remove a server to the configuration
+    removehost NAME
+        Remove a host to the configuration
+
+    edithost HOST OPTION VALUE
+        Modify a host. Options are "host, port, user"
 
     writeconfig 
-        Writes the vzcontrol config file. Use after you add or remove servers
+        Writes the vzcontrol config file. Use after you add, edit, or remove hosts
+
+    showconfig 
+        Displays the VZControl config contents.
