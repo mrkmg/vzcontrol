@@ -26,6 +26,7 @@
 class App {
     public static $_modules = array();
     public static $_reader;
+    public static $isVerbose = 0;
 
     static function setup(){
         self::$_reader = new Hoa\Console\Readline\Readline; 
@@ -34,6 +35,7 @@ class App {
     
     static function addModule($name){
         if(!class_exists($name)) require_once 'App/'.$name.'.php';
+        self::log('Loading new module: '.$name);
         self::$_modules[$name] = new $name;
     }
 
@@ -47,6 +49,40 @@ class App {
 
     static function reader(){
         return self::$_reader;
+    }
+
+    static function eol(){
+        return PHP_EOL;
+    }
+
+    static function line($message){
+        echo $message.self::eol();
+    }
+
+    static function log($message){
+        if(self::$isVerbose >= 2) fwrite(STDERR, '[log] '.$message.self::eol());
+    }
+
+    static function warn($message){
+        if(self::$isVerbose >= 1) fwrite(STDERR, '[warn] '.$message.self::eol());
+    }
+
+    static function simpleHeader($header){ 
+        self::line($header);
+        self::line(str_repeat('-', strlen($header)));
+        return true;
+    }
+
+    static function showHeader(){
+        $dims = self::m('Utils')->getScreenDimensions();
+        self::line(str_repeat('#', $dims[0]));
+        self::line('#'.str_repeat(' ', max(ceil(($dims[0]-11)/2),0)).'VzControl'.str_repeat(' ', max(floor(($dims[0]-11)/2),0)).'#');
+        self::line('#'.str_repeat(' ', max(ceil(($dims[0]-16)/2),0)).'OpenVZ Manager'.str_repeat(' ', max(floor(($dims[0]-16)/2),0)).'#');
+        self::line('#'.str_repeat(' ', $dims[0]-2).'#');
+        self::line('#'.str_repeat(' ', max(ceil(($dims[0]-36)/2),0)).'Created By MrKMG <kevin@mrkmg.com>'.str_repeat(' ', max(floor(($dims[0]-36)/2),0)).'#');
+        self::line('# Type `help` to start'.str_repeat(' ', $dims[0]-23).'#');
+        self::line('#'.str_repeat(' ', $dims[0]-9).'v0.5.2 #');
+        self::line(str_repeat('#', $dims[0]));
     }
 }
 ?>

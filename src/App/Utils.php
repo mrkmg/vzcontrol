@@ -30,5 +30,9 @@ class Utils{
         $ar = array_filter($ar,function($v){return !empty($v); });
         return $ar;
     }
+
+    public function getScreenDimensions(){
+        return array(exec('tput cols'),exec('tput lines'));
+    }
 }
 ?>

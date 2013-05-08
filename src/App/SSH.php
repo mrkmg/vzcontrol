@@ -28,12 +28,41 @@ class SSH {
     const COMMAND_FAILED=1;
     const SSH_FAILED=255;
 
+    private $uris = array();
+
+    public function __construct(){
+        register_shutdown_function(array($this,'closeConnections'));
+    }
+
+    public function closeConnections(){
+        foreach($this->uris as $uri=>$soc){
+            App::log('Closing ssh connection with id: '.$soc);
+            exec('ssh -O stop -S /tmp/vzcontrol_ssh_'.$soc.' '.$uri.' > /dev/null 2>&1');
+        }
+    }
+
+    private function getConnection($uri){
+        if(!isset($this->uris[$uri])){
+            $this->makeConnection($uri);
+        }
+        return '-S /tmp/vzcontrol_ssh_'.$this->uris[$uri].' '.$uri;
+    }
+
+    private function makeConnection($uri){
+        $soc = rand(1000,9999);
+        App::log('Starting ssh connection with id: '.$soc);
+        exec('ssh '.$uri.' -o "ControlPersist=yes" -fNMS /tmp/vzcontrol_ssh_'.$soc.' > /dev/null 2>&1');
+        App::log('Connection Started with id: '.$soc);
+        $this->uris[$uri] = $soc;
+    }
+
     public function run($uri,$command){
-        App::reader()->restoreStty();
         $command = 'ssh -q -t'
                  . ' -o ConnectTimeout=2 '
-                 . $uri
+                 . $this->getConnection($uri)
                  . ' "'.str_replace('"','\\"',$command).'"';
+        App::log('Running SSH Command: '.$command);
+        App::reader()->restoreStty();
         passthru($command,$return);
         App::reader()->setStty();
         return $return;
@@ -44,6 +73,7 @@ class SSH {
                  . ' -o ConnectTimeout=2 '
                  . $uri
                  . ' "'.str_replace('"','\\"',$command).'"';
+        App::log('Running SSH Command: '.$command);
         $output = shell_exec($command);
         return $output;
     }
