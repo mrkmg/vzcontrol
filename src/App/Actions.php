@@ -703,7 +703,7 @@ class Actions {
     }
 
     private function write_config($args){
-        file_put_contents($_SERVER['HOME'].'/.vzcontrol.conf', App::m('Servers')->getIni());
+        file_put_contents(App::$config_location, App::m('Servers')->getIni());
         return true;
     }
 

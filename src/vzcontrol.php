@@ -32,7 +32,7 @@ $doMake = false;
 $config_file = false;
 $verbose = false;
 
-$gopt = getopt('c:vmh');
+$gopt = getopt('s:c:vmh');
 
 if(array_key_exists('h', $gopt)){
     echo <<<EOT
@@ -45,6 +45,7 @@ Usage:
 -h   Show this help
 -c   Define a custom config (Defaults to ~/.vzcontrol.conf)
 -m   Make a default config file
+-s   TMP Location for SSH Sockets (If set to same for multiple instances they we will share sockets)
 -v   Turn on verbose mode (Warnings only)
 -vv  Turn on verbose mode (Warnings and logs)
 
@@ -54,6 +55,7 @@ EOT;
 if(array_key_exists('m', $gopt)) $doMake = true;
 if(array_key_exists('v', $gopt)) $verbose = count($gopt['v']);
 if(array_key_exists('c', $gopt)) $config_file = $gopt['c'];
+if(array_key_exists('s', $gopt)) $socket = $gopt['s']; else $socket = '/tmp/';
 
 if($config_file === false){
     if(!isset($_SERVER['HOME'])){
@@ -81,9 +83,10 @@ $servers = parse_ini_file($config_file,true);
 
 App::setup();
 App::$isVerbose = $verbose;
+App::$config_location = $config_file;
 App::addModule('Servers');
 App::m('Servers')->setServers($servers);
-App::addModule('SSH');
+App::addModule('SSH',$socket);
 App::addModule('Actions');
 App::addModule('Utils');
 App::addModule('Validate');

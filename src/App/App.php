@@ -24,6 +24,7 @@
  */
 
 class App {
+    public static $config_location = null;
     public static $_modules = array();
     public static $_reader;
     public static $isVerbose = 0;
@@ -33,10 +34,10 @@ class App {
         self::$_reader->setAutocomplete('autocompleterParse');
     }
     
-    static function addModule($name){
+    static function addModule($name,$args=null){
         if(!class_exists($name)) require_once 'App/'.$name.'.php';
         self::log('Loading new module: '.$name);
-        self::$_modules[$name] = new $name;
+        self::$_modules[$name] = new $name($args);
     }
 
     static function m($name){

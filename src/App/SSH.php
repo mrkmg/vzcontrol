@@ -28,32 +28,42 @@ class SSH {
     const COMMAND_FAILED=1;
     const SSH_FAILED=255;
 
-    private $uris = array();
+    public $socket_location = '/tmp/';
 
-    public function __construct(){
+    private $connections = array();
+
+    public function __construct($sl){
         register_shutdown_function(array($this,'closeConnections'));
+        $this->socket_location = $sl;
     }
 
     public function closeConnections(){
-        foreach($this->uris as $uri=>$soc){
-            App::log('Closing ssh connection with id: '.$soc);
-            exec('ssh -O stop -S /tmp/vzcontrol_ssh_'.$soc.' '.$uri.' > /dev/null 2>&1');
+        foreach($this->connections as $uri=>$sl){
+            App::log('Closing persistant ssh connection for: '.$uri);
+            exec('ssh -O stop -S '.$sl.' '.$uri.' > /dev/null 2>&1');
         }
+    }
+
+    private function getSocketLocation($uri){
+        $pattern = '/[^a-z0-9.]/i';
+        $replacement = '';
+        return $this->socket_location.'vzcs_'.preg_replace($pattern, $replacement, $uri, -1 );
     }
 
     private function getConnection($uri){
-        if(!isset($this->uris[$uri])){
+        $sl = $this->getSocketLocation($uri);
+        if(!file_exists($sl)){
             $this->makeConnection($uri);
+            $this->connections[$uri] = $sl;
         }
-        return '-S /tmp/vzcontrol_ssh_'.$this->uris[$uri].' '.$uri;
+
+        return '-S '.$sl.' '.$uri;
     }
 
     private function makeConnection($uri){
-        $soc = rand(1000,9999);
-        App::log('Starting ssh connection with id: '.$soc);
-        exec('ssh '.$uri.' -o "ControlPersist=yes" -fNMS /tmp/vzcontrol_ssh_'.$soc.' > /dev/null 2>&1');
-        App::log('Connection Started with id: '.$soc);
-        $this->uris[$uri] = $soc;
+        App::log('Starting persistant ssh connection for: '.$uri);
+        exec('ssh '.$uri.' -o "ControlPersist=yes" -fNMS '.$this->getSocketLocation($uri).' > /dev/null 2>&1');
+        App::log('Persistant connection started for: '.$uri);
     }
 
     public function run($uri,$command){
