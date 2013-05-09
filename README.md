@@ -1,4 +1,4 @@
-VZControl - v0.5.3
+VZControl - v0.6.0
 =========
 
 A CLI environment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
@@ -29,7 +29,7 @@ the following and more.
 - Create a new container
 - Shutdown/Reboot an OpenVZ Host
 - Run custom commands on an OpenVZ Host
-- Tab auto-complete of commands and container completion
+- Tab auto-complete of commands and containers
 
 
 Quick Start (Debian)
@@ -55,7 +55,7 @@ Make vzcontrol executable
 
 Create the default config file
 
-    mrkmg$ ./vcontrol make
+    mrkmg$ ./vcontrol -m
 
 If you are running this on a machine that is not one of your OpenVZ Hosts, remove the default server
 
@@ -164,7 +164,7 @@ vzcontrol uses a configuration file to determine which servers it is able to adm
 
 You can also dynamically create this file via the vzcontrol command interface. For example, if you are starting from scratch.
 
-    mrkmg$ vzcontrol make
+    mrkmg$ vzcontrol -m
     ######################################
     #             VZControl              #
     #           OpenVZ Manager           #
@@ -199,8 +199,8 @@ Building
 
 1. Clone the repo `git clone https://github.com/mrkmg/vzcontrol.git`
 2. Enter Dir `cd vzcontrol`
-4. Build `./build`
-5. *Optional* Symlink the script to PATH eg. `sudo ln /path/to/repo/out/vzcontrol /usr/bin/vzcontrol`
+3. Build: `./build` to just build or `./build install` to build and symlink to /usr/bin/vzcontrol
+
 
 Usage
 -----
@@ -210,91 +210,104 @@ After you have built and configured vzcontrol, you can launch it from the out di
 If you did symlink the script: `vzcontrol`  
 If you did not symlink: `./out/vzcontrol`
 
-Here is a list of all commands
+Command Link Switches:
 
-    ls [HOST] [HOST] ...
-        List running containers on OpenVZ Host(s)
+-h   Show the help
+-c   Define a custom config (Defaults to ~/.vzcontrol.conf)
+-m   Make a default config file
+-s   Temp Location for SSH Sockets (If set to same for multiple instances they we will share sockets)
+-v   Turn on verbose mode (Warnings only)
+-vv  Turn on verbose mode (Warnings and logs)
 
-    lsa [HOST] [HOST] ...
-        List all containers on OpenVZ Host(s)
+Here is a list of all the commands
 
-    lst [HOST] [HOST] ...
-        List templates on OpenVZ Host(s)
+ls [HOST] [HOST] ...
+    List running containers on OpenVZ Host(s)
 
-    lsot [SECTION]
-        List available template for download. Sections include beta, old, and contrib
+lsa [HOST] [HOST] ...
+    List all containers on OpenVZ Host(s)
 
-    install HOST TEMPLATE [SECTION]
-        Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib
+lst [HOST] [HOST] ...
+    List templates on OpenVZ Host(s)
 
-    mv CURENTHOST CTID DESTHOST
-        Perform an offline migration of container CTID on CURRENTHOST to DESTHOST
+lsot [SECTION]
+    List available template for download. Sections include beta, old, and contrib
 
-    mvo CURRENTHOST CTID DESTHOST
-        Perform an online migration of container CTID on CURRENTHOST to DESTHOST
+install HOST TEMPLATE [SECTION]
+    Install TEMPLATE from [SECTION] on HOST. Sections include beta, old, and contrib
 
-    set HOST CTID OPTION
-        Change OPTION of CTID of HOST
+mv CURENTHOST CTID DESTHOST
+    Perform an offline migration of container CTID on CURRENTHOST to DESTHOST
 
-    see HOST CTID
-        See configuration of CTID of HOST
+mvo CURRENTHOST CTID DESTHOST
+    Perform an online migration of container CTID on CURRENTHOST to DESTHOST
 
-    start HOST CTID
-        Start container CTID on HOST
+set HOST CTID OPTION
+    Change OPTION of CTID of HOST
+    Options are: memory, autoboot, cpuunit, cpulimit, cpus, diskquota, diskspace, ipadd, ipdel, nameserver
 
-    stop HOST CTID
-        Stop container CTID on HOST
+see HOST CTID
+    See configuration of CTID of HOST
 
-    restart HOST CTID
-        Restart container CTID on HOST
+start HOST CTID
+    Start container CTID on HOST
 
-    enter HOST CTID
-        Enter container CTID on HOST
+stop HOST CTID
+    Stop container CTID on HOST
 
-    create HOST
-        Create a new container on HOST
+restart HOST CTID
+    Restart container CTID on HOST
 
-    rm HOST CTID
-        Destroy container CTID on HOST
+enter HOST CTID
+    Enter container CTID on HOST
 
-    reboot HOST [HOST] ...
-        Reboot OpenVZ Host(s)
+create HOST
+    Create a new container on HOST
 
-    shutdown HOST [HOST] ...
-        Shutdown OpenVZ Host(s)
+rm HOST CTID
+    Destroy container CTID on HOST
 
-    uptime [HOST] [HOST] ...
-        Get uptime for OpenVZ Host(s)
+reboot HOST [HOST] ...
+    Reboot OpenVZ Host(s)
 
-    tops [HOST] [HOST] ...
-        Get the top for OpenVZ Host(s)
+shutdown HOST [HOST] ...
+    Shutdown OpenVZ Host(s)
 
-    clear 
-        clears all output on screen
+uptime [HOST] [HOST] ...
+    Get uptime for OpenVZ Host(s)
 
-    raw HOST COMMAND
-        Runs COMMAND on HOST
+tops [HOST] [HOST] ...
+    Get the top for OpenVZ Host(s)
 
-    quit 
-        Exit/Quit the program
+clear 
+    clears all output on screen
 
-    exit 
-        Exit/Quit to the program
+raw HOST COMMAND
+    Runs COMMAND on HOST
 
-    help [COMMAND]
-        Show this help page
+quit 
+    Exit/Quit the program
 
-    addhost NAME HOST [PORT] [USER]
-        Add a host to the configuration (Defaults: Port 22, User root)
+exit 
+    Exit/Quit to the program
 
-    removehost NAME
-        Remove a host to the configuration
+help [COMMAND|all]
+    Show the help page
 
-    edithost HOST OPTION VALUE
-        Modify a host. Options are "host, port, user"
+? [COMMAND|all]
+    Show the help page
 
-    writeconfig 
-        Writes the vzcontrol config file. Use after you add, edit, or remove hosts
+addhost NAME HOST [PORT] [USER]
+    Add a host to the configuration (Defaults: Port 22, User root)
 
-    showconfig 
-        Displays the VZControl config contents.
+removehost NAME
+    Remove a host to the configuration
+
+edithost HOST OPTION VALUE
+    Modify a host. Options are "host, port, user"
+
+writeconfig 
+    Writes the vzcontrol config file. Use after you add, edit, or remove hosts
+
+showconfig 
+    Displays the VZControl config contents.

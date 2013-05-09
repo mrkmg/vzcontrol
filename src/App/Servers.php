@@ -60,13 +60,13 @@ class Servers {
     }
 
     public function getIni(){
-        $ini = '; This is a VZControl configuration file'.newLine();
+        $ini = '; This is a VZControl configuration file'.App::eol();
         foreach($this->servers as $name=>$options){
-            $ini .= '['.$name.']'.newLine();
+            $ini .= '['.$name.']'.App::eol();
             foreach($options as $k=>$v){
-                $ini .= $k.' = '.$v.newLine();
+                $ini .= $k.' = '.$v.App::eol();
             }
-            $ini .= newLine();
+            $ini .= App::eol();
         }
         return $ini;
     }
@@ -96,6 +96,12 @@ class Servers {
         if(!isset($this->servers[$host])) return false;
         if(!isset($this->servers[$host]['host'])) return false;
         return $this->getUserFor($host).'@'.$this->servers[$host]['host'];
+    }
+
+    public function getUrlFor($host){
+        if(!isset($this->servers[$host])) return false;
+        if(!isset($this->servers[$host]['host'])) return false;
+        return $this->servers[$host]['host'];
     }
 
     public function getUserFor($host){

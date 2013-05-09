@@ -22,27 +22,42 @@
  *
  */
 
-if(!defined('BUILT')){
-    require 'Hoa/Core/Core.php';
-    require 'Hoa/Console/Readline/Readline.php';
-    require 'Hoa/Console/Readline/Password.php';
-    require 'App/App.php';
-    require 'functions.php';
-}
+require 'Hoa/Core/Core.php';
+require 'Hoa/Console/Readline/Readline.php';
+require 'Hoa/Console/Readline/Password.php';
+require 'App/App.php';
+require 'functions.php';
+
+define('VZC_VERSION','0.6.0');
 
 $doMake = false;
 $config_file = false;
+$verbose = false;
 
-if(isset($argv[1])){
-    if($argv[1] == 'make'){
-        $doMake = true;
-        if(isset($argv[2])){
-            $config_file = $argv[2];
-        }
-    } else {
-        $config_file = $argv[1];
-    }
+$gopt = getopt('s:c:vmh');
+
+if(array_key_exists('h', $gopt)){
+    echo <<<EOT
+VZControl
+
+VZControl allows you to easily control OpenVZ hosts and containers
+
+Usage:
+
+-h   Show this help
+-c   Define a custom config (Defaults to ~/.vzcontrol.conf)
+-m   Make a default config file
+-s   Temp Location for SSH Sockets (If set to same for multiple instances they we will share sockets)
+-v   Turn on verbose mode (Warnings only)
+-vv  Turn on verbose mode (Warnings and logs)
+
+EOT;
+    exit(1);
 }
+if(array_key_exists('m', $gopt)) $doMake = true;
+if(array_key_exists('v', $gopt)) $verbose = count($gopt['v']);
+if(array_key_exists('c', $gopt)) $config_file = $gopt['c'];
+if(array_key_exists('s', $gopt)) $socket = $gopt['s']; else $socket = '/tmp/';
 
 if($config_file === false){
     if(!isset($_SERVER['HOME'])){
@@ -60,22 +75,27 @@ if($doMake){
 }
 
 if(!file_exists($config_file)){
-    putLine("No config file could be found");
+    putLine("No config file could be found, Please run with make param");
     exit(1);
 }
+
+
 
 $servers = parse_ini_file($config_file,true);
 
 App::setup();
+App::$isVerbose = $verbose;
+App::$config_location = $config_file;
 App::addModule('Servers');
 App::m('Servers')->setServers($servers);
-App::addModule('SSH');
+App::addModule('SSH',$socket);
 App::addModule('Actions');
 App::addModule('Utils');
+App::addModule('Validate');
 
 App::reader()->setAutocomplete('autocompleterParse');
 
-showBanner();
+App::showHeader();
 
 while(1){
     $line = App::r('VZControl> ');
@@ -83,7 +103,7 @@ while(1){
     $command = $line[0];
     $args = isset($line[1])?$line[1]:null;
     if(strlen($command) == 0){
-        putLine('No command was given.');
+        App::line('No command was given.');
     }
     if(!App::m('Actions')->run($command,$args))
         App::m('Actions')->run('help',$command);

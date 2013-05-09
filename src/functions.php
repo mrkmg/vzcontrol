@@ -25,11 +25,13 @@
 
 
 function putLine($line){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     echo $line.newLine();
     return true;
 }
 
 function newLine(){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     return PHP_EOL;
 }
 
@@ -74,6 +76,7 @@ function autocompleterParse($pre,$cur){
 }
 
 function getCtidFor($server_name){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     global $servers;
 
     $ctid_raw = returnSSH($server_name,'vzlist -a -H -1');
@@ -84,12 +87,14 @@ function getCtidFor($server_name){
 }
 
 function putHeader($header){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     putLine($header);
     putLine(str_repeat('-', strlen($header)));
     return true;
 }
 
 function runSSH($server_name,$command){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     global $servers;
     global $reader;
     if(!isset($servers[$server_name])) return false;
@@ -105,6 +110,7 @@ function runSSH($server_name,$command){
 }
 
 function returnSSH($server_name,$command){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     global $servers;
     if(!isset($servers[$server_name])) return false;
     $command = 'ssh -q '
@@ -119,6 +125,7 @@ function returnSSH($server_name,$command){
 
 
 function get_templates_for_host($host){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     global $servers;
 
     $templates = returnSSH($host,'ls /vz/template/cache | sed s/.tar.gz//');
@@ -130,6 +137,7 @@ function get_templates_for_host($host){
 
 
 function get_wanted_servers($args){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     global $servers;
     if(strlen($args)){
         $servers_wanted = explode(' ',$args);
@@ -151,6 +159,7 @@ function get_wanted_servers($args){
 
 
 function getOnlinetemplates($args){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     $url = 'download.openvz.org';
     $folder = 'template/precreated/';
     if(strlen($args)) $folder .= $args.'/';
@@ -166,6 +175,7 @@ function getOnlinetemplates($args){
 
 
 function exploder($d,$s){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     $ar = explode($d,$s);
     $ar = array_filter($ar,function($v){return !empty($v); });
     return $ar;
@@ -176,7 +186,19 @@ function exploder($d,$s){
 
 
 function showBanner(){
-    putLine('######################################');
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
+    $dims = App::m('Utils')->getScreenDimensions();
+    putLine(str_repeat('#', $dims[0]));
+    putLine('#'.str_repeat(' ', max(ceil(($dims[0]-11)/2),0)).'VzControl'.str_repeat(' ', max(floor(($dims[0]-11)/2),0)).'#');
+    putLine('#'.str_repeat(' ', max(ceil(($dims[0]-16)/2),0)).'OpenVZ Manager'.str_repeat(' ', max(floor(($dims[0]-16)/2),0)).'#');
+    putLine('#'.str_repeat(' ', $dims[0]-2).'#');
+    putLine('#'.str_repeat(' ', max(ceil(($dims[0]-36)/2),0)).'Created By MrKMG <kevin@mrkmg.com>'.str_repeat(' ', max(floor(($dims[0]-36)/2),0)).'#');
+    putLine('# Type `help` to start'.str_repeat(' ', $dims[0]-23).'#');
+    putLine('#'.str_repeat(' ', $dims[0]-9).'v0.5.2 #');
+    putLine(str_repeat('#', $dims[0]));
+
+
+    /*putLine('######################################');
     putLine('#             VzControl              #');
     putLine('#           OpenVZ Manager           #');
     putLine('#                                    #');
@@ -184,10 +206,11 @@ function showBanner(){
     putLine('# Type `help` to start               #');
     putLine('#                             v0.5.2 #');
     putLine('######################################');
-    putLine('');
+    putLine('');*/
 }
 
 function writeInitialINIFile($location){
+    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
     return file_put_contents($location,
 '; This is a VZControl configuration file
 
