@@ -28,6 +28,8 @@ require 'Hoa/Console/Readline/Password.php';
 require 'App/App.php';
 require 'functions.php';
 
+define('VZC_VERSION','0.6.0');
+
 $doMake = false;
 $config_file = false;
 $verbose = false;
@@ -45,7 +47,7 @@ Usage:
 -h   Show this help
 -c   Define a custom config (Defaults to ~/.vzcontrol.conf)
 -m   Make a default config file
--s   TMP Location for SSH Sockets (If set to same for multiple instances they we will share sockets)
+-s   Temp Location for SSH Sockets (If set to same for multiple instances they we will share sockets)
 -v   Turn on verbose mode (Warnings only)
 -vv  Turn on verbose mode (Warnings and logs)
 

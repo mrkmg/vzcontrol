@@ -70,7 +70,7 @@ class Actions {
             'set'=>array(
                 'func'=>'set_option',
                 'usage'=>'HOST CTID OPTION',
-                'desc'=>'Change OPTION of CTID of HOST',
+                'desc'=>"Change OPTION of CTID of HOST\n\tOptions are: memory, autoboot, cpuunit, cpulimit, cpus, diskquota, diskspace, ipadd, ipdel, nameserver",
                 'auto'=>'$host $ctid ?memory,autoboot,cpuunit,cpulimit,cpus,diskquota,diskspace,ipadd,ipdel,nameserver'
             ),
             'see'=>array(

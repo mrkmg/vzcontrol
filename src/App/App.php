@@ -82,7 +82,7 @@ class App {
         self::line('#'.str_repeat(' ', $dims[0]-2).'#');
         self::line('#'.str_repeat(' ', max(ceil(($dims[0]-36)/2),0)).'Created By MrKMG <kevin@mrkmg.com>'.str_repeat(' ', max(floor(($dims[0]-36)/2),0)).'#');
         self::line('# Type `help` to start'.str_repeat(' ', $dims[0]-23).'#');
-        self::line('#'.str_repeat(' ', $dims[0]-9).'v0.5.2 #');
+        self::line('#'.str_repeat(' ', $dims[0]-9).VZC_VERSION.' #');
         self::line(str_repeat('#', $dims[0]));
     }
 }
