@@ -70,8 +70,8 @@ class Actions {
             'set'=>array(
                 'func'=>'set_option',
                 'usage'=>'HOST CTID OPTION',
-                'desc'=>'Change OPTION of CTID of HOST',
-                'auto'=>'$host $ctid ?memory,autoboot,cpuunit,cpulimit,cpus,diskquota,diskspace,ipadd,ipdel'
+                'desc'=>"Change OPTION of CTID of HOST\n\tOptions are: memory, autoboot, cpuunit, cpulimit, cpus, diskquota, diskspace, ipadd, ipdel, nameserver",
+                'auto'=>'$host $ctid ?memory,autoboot,cpuunit,cpulimit,cpus,diskquota,diskspace,ipadd,ipdel,nameserver'
             ),
             'see'=>array(
                 'func'=>'see_options',
@@ -167,6 +167,12 @@ class Actions {
                 'desc'=>'Show this help page',
                 'auto'=>'$func'
             ),
+            '?'=>array(
+                'func'=>'help',
+                'usage'=>'[COMMAND]',
+                'desc'=>'Show this help page',
+                'auto'=>'$func'
+            ),
             'addhost'=>array(
                 'func'=>'add_server',
                 'usage'=>'NAME HOST [PORT] [USER]',
@@ -225,11 +231,11 @@ class Actions {
         if(!$servers_wanted = App::m('Servers')->parseListOfServers($args)) return false;
 
         foreach($servers_wanted as $server_name){
-            putHeader('Listing for '.$server_name);
+            App::simpleHeader('Listing for '.$server_name);
             if(App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'vzlist'.($all?' -a':'')) == SSH::SSH_FAILED){
-                putLine($server_name.' is not online');
+                App::line($server_name.' is not online');
             }
-            echo newLine();
+            echo App::eol();
         }
         return true;
     }
@@ -241,7 +247,7 @@ class Actions {
     private function move_container($args,$live=false){
         $args = App::m('Utils')->exploder(' ',$args);
         if(count($args) !== 3){
-            putLine('Incorrect usage.');
+            App::line('Incorrect usage.');
             return false;
         }
         $source = $args[0];
@@ -249,19 +255,19 @@ class Actions {
         $dest = $args[2];
 
         if(!$suri = App::m('Servers')->getUriFor($source)){
-            putLine($source.' was not found');
+            App::line($source.' was not found');
             return false;
         }
-        if(!$duri = App::m('Servers')->getUriFor($dest)){
-            putLine($dest.' was not found');
+        if(!$duri = App::m('Servers')->getUrlFor($dest)){
+            App::line($dest.' was not found');
             return false;
         }
 
         $result = App::m('SSH')->run($suri,'vzmigrate'.($live?' --online ':' ').$duri.' '.$ctid);
         if($result==SSH::COMMAND_FAILED)
-            putLine('Migration Failed');
+            App::line('Migration Failed');
         elseif($result==SSH::SSH_FAILED)
-            putLine($source.' is offline');
+            App::line($source.' is offline');
         return !$result;
     }
 
@@ -275,15 +281,15 @@ class Actions {
         $ctid = $args[1];
 
         if(!$uri = App::m('Servers')->getUriFor($host)){
-            putLine($host.' is not known');
+            App::line($host.' is not known');
             return false;
         }
 
         $result = App::m('SSH')->run($uri,'vzctl stop '.$ctid);
         if($result==SSH::COMMAND_FAILED)
-            putLine('Stop Failed');
+            App::line('Stop Failed');
         elseif($result==SSH::SSH_FAILED)
-            putLine($source.' is offline');
+            App::line($source.' is offline');
         return !$result;
     }
 
@@ -293,15 +299,15 @@ class Actions {
         $ctid = $args[1];
 
         if(!$uri = App::m('Servers')->getUriFor($host)){
-            putLine($host.' is not known');
+            App::line($host.' is not known');
             return false;
         }
 
         $result = App::m('SSH')->run($uri,'vzctl start '.$ctid);
         if($result==SSH::COMMAND_FAILED)
-            putLine('Stop Failed');
+            App::line('Stop Failed');
         elseif($result==SSH::SSH_FAILED)
-            putLine($source.' is offline');
+            App::line($source.' is offline');
         return !$result;
     }
 
@@ -311,15 +317,15 @@ class Actions {
         $ctid = $args[1];
 
         if(!$uri = App::m('Servers')->getUriFor($host)){
-            putLine($host.' is not known');
+            App::line($host.' is not known');
             return false;
         }
 
         $result = App::m('SSH')->run($uri,'vzctl restart '.$ctid);
         if($result==SSH::COMMAND_FAILED)
-            putLine('Stop Failed');
+            App::line('Stop Failed');
         elseif($result==SSH::SSH_FAILED)
-            putLine($source.' is offline');
+            App::line($source.' is offline');
         return !$result;
     }
 
@@ -329,15 +335,15 @@ class Actions {
         $ctid = $args[1];
 
         if(!$uri = App::m('Servers')->getUriFor($host)){
-            putLine($host.' is not known');
+            App::line($host.' is not known');
             return false;
         }
 
         $result = App::m('SSH')->run($uri,'vzctl enter '.$ctid);
         if($result==SSH::COMMAND_FAILED)
-            putLine('Stop Failed');
+            App::line('Stop Failed');
         elseif($result==SSH::SSH_FAILED)
-            putLine($source.' is offline');
+            App::line($source.' is offline');
         return !$result;
     }
 
@@ -345,7 +351,7 @@ class Actions {
         $reader = App::reader();
         $args = trim($args);
         if(!$uri = App::m('Servers')->getUriFor($args)){
-            putLine($args.' is not known');
+            App::line($args.' is not known');
             return false;
         }
         global $___HOST;
@@ -353,7 +359,7 @@ class Actions {
 
         $_oldAuto = $reader->getAutocomplete();
         $reader->removeAutocomplete();
-        putLine('You will be prompted for a series of details.');
+        App::line('You will be prompted for a series of details.');
         $ctid = $reader->readLine('CTID? ');
         $reader->setAutocomplete(function($pre,$cur){
             global $___HOST;
@@ -376,30 +382,30 @@ class Actions {
             $rootPassword    =  $pReader->readLine('Root Password? ');
             $confirmPassword =  $pReader->readLine('Confirm? ');
             $tries++;
-        }while($tries <= 3 and !((!empty($rootPassword) and $rootPassword == $confirmPassword) or !putLine('Passwords did not match')));
+        }while($tries <= 3 and !((!empty($rootPassword) and $rootPassword == $confirmPassword) or !App::line('Passwords did not match')));
         if($tries > 3){
-            putLine('Quiting, password did not match');
+            App::line('Quiting, password did not match');
             return false;
         }
-        putLine('Going to create a new container on '.$args);
-        putLine('CTID: '.$ctid);
-        putLine('OS Template: '.$ostemplate);
-        putLine('IP Address: '.$ipaddr);
-        putLine('Hostname: '.$hostname);
-        putLine('Nameserver: '.$nameserver);
+        App::line('Going to create a new container on '.$args);
+        App::line('CTID: '.$ctid);
+        App::line('OS Template: '.$ostemplate);
+        App::line('IP Address: '.$ipaddr);
+        App::line('Hostname: '.$hostname);
+        App::line('Nameserver: '.$nameserver);
         $confirm = $reader->readLine('Are you sure you want to create this container? (y/N)> ');
         if(!in_array($confirm,array('y','Y','yes','Yes','YES'))){
             return true;
         }
         $reader->setAutocomplete($_oldAuto);
-        putLine('Creating container');
+        App::line('Creating container');
         $return = App::m('SSH')->run($uri,'vzctl create '.$ctid.' --ostemplate '.$ostemplate);
         if($return == SSH::SSH_FAILED)
         {
-            putLine($args. 'is offline');
+            App::line($args. 'is offline');
         }
         elseif($return == SSH::COMMAND_FAILED){
-            putLine('Failed to create container');
+            App::line('Failed to create container');
         }
         if(!$return){
             App::m('SSH')->run($uri,'vzctl set '.$ctid.' --ipadd '.$ipaddr.' --save');
@@ -416,7 +422,7 @@ class Actions {
         $ctid = $args[1];
 
         if(!$uri = App::m('Servers')->getUriFor($host)){
-            putLine($host.' is not known');
+            App::line($host.' is not known');
             return false;
         }
 
@@ -428,9 +434,9 @@ class Actions {
         $result = App::m('SSH')->run($uri,'vzctl destroy '.$ctid);
         
         if($result==SSH::COMMAND_FAILED)
-            putLine('Remove Failed');
+            App::line('Remove Failed');
         elseif($result==SSH::SSH_FAILED)
-            putLine($source.' is offline');
+            App::line($source.' is offline');
         return !$result;
     }
 
@@ -438,10 +444,10 @@ class Actions {
         if(!$servers_wanted = App::m('Servers')->parseListOfServers($args)) return false;
 
         foreach($servers_wanted as $server_name){
-            putHeader('Listing Templates for '.$server_name);
+            App::simpleHeader('Listing Templates for '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'ls /vz/template/cache | sed s/.tar.gz//');
-            if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            echo newLine();
+            if($r==SSH::SSH_FAILED) App::line($server_name.' is offline');
+            echo App::eol();
         }
 
         return true;
@@ -451,10 +457,10 @@ class Actions {
         if(!$servers_wanted = App::m('Servers')->parseListOfServers($args)) return false;
 
         foreach($servers_wanted as $server_name){
-            putHeader('Uptime for '.$server_name);
+            App::simpleHeader('Uptime for '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'uptime');
-            if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            echo newLine();
+            if($r==SSH::SSH_FAILED) App::line($server_name.' is offline');
+            echo App::eol();
         }
 
         return true;
@@ -464,11 +470,11 @@ class Actions {
         if(!$servers_wanted = App::m('Servers')->parseListOfServers($args)) return false;
 
         foreach($servers_wanted as $server_name){
-            putHeader('Uptime for '.$server_name);
+            App::simpleHeader('Uptime for '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'top -n 5');
             system('clear');
-            if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            echo newLine();
+            if($r==SSH::SSH_FAILED) App::line($server_name.' is offline');
+            echo App::eol();
         }
 
         return true;
@@ -483,9 +489,9 @@ class Actions {
         $file_list = ftp_nlist($conn, $folder);
         $file_list = array_filter($file_list,function($o){ return preg_match('/\.tar\.gz$/', $o); });
         array_walk($file_list,function(&$o,$key,$folder){ $o = substr($o,strlen($folder)); $o = substr($o,0,strlen($o)-7); },$folder);
-        putLine('All templates online');
+        App::line('All templates online');
         foreach($file_list as $file){
-            putLine($file);
+            App::line($file);
         }
 
         return true;
@@ -500,14 +506,14 @@ class Actions {
         if(isset($args[2])) $folder .= $args[2].'/';
 
         if(!$uri = App::m('Servers')->getUriFor($host)){
-            putLine($host.' is not known');
+            App::line($host.' is not known');
             return false;
         }
 
-        putLine('Downloading requested template');
+        App::line('Downloading requested template');
         $r = App::m('SSH')->run($uri,'wget http://'.$url.'/'.$folder.'/'.$template.'.tar.gz -O /vz/template/cache/'.$template.'.tar.gz --progress=bar:force');
-        if($r==SSH::SSH_FAILED) putLine($host.' is offline');
-        else if($r==SSH::COMMAND_FAILED) putLine('Failed to download template');
+        if($r==SSH::SSH_FAILED) App::line($host.' is offline');
+        else if($r==SSH::COMMAND_FAILED) App::line('Failed to download template');
         return !$r;
     }
 
@@ -520,10 +526,10 @@ class Actions {
         }
 
         foreach($servers_wanted as $server_name){
-            putLine('Shutting down '.$server_name);
+            App::line('Shutting down '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'shutdown -h now');
-            if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            echo newLine();
+            if($r==SSH::SSH_FAILED) App::line($server_name.' is offline');
+            echo App::eol();
         }
 
         return true;
@@ -538,10 +544,10 @@ class Actions {
         }
 
         foreach($servers_wanted as $server_name){
-            putLine('Rebooting '.$server_name);
+            App::line('Rebooting '.$server_name);
             $r = App::m('SSH')->run(App::m('Servers')->getUriFor($server_name),'reboot');
-            if($r==SSH::SSH_FAILED) putLine($server_name.' is offline');
-            echo newLine();
+            if($r==SSH::SSH_FAILED) App::line($server_name.' is offline');
+            echo App::eol();
         }
         
         return true;
@@ -597,10 +603,13 @@ class Actions {
                 App::m('SSH')->run($uri,'vzctl set '.$ctid.' --ipadd '.$ip.' --save');
                 return true;
             case 'ipdel':
-                $ip = App::r('IP to add?> ');
+                $ip = App::r('IP to delete?> ');
                 App::m('SSH')->run($uri,'vzctl set '.$ctid.' --ipdel '.$ip.' --save');
                 return true;
                 break;
+            case 'nameserver':
+                $dns = App::r('Nameserver?> ');
+                App::m('SSH')->run($uri,'vzctl set '.$ctid.' --nameserver '.$dns.' --save');
         }
 
         return false;
@@ -624,24 +633,24 @@ class Actions {
             if(isset($this->map[$args])){
                 $command = $args;
                 $info = $this->map[$args];
-                putLine($command.' '.$info['usage']);
-                putLine("\t".$info['desc']);
-                echo newLine();
+                App::line($command.' '.$info['usage']);
+                App::line("\t".$info['desc']);
+                echo App::eol();
             }
             elseif($args == 'all'){
                 foreach($this->map as $command=>$info){
-                    putLine($command.' '.$info['usage']);
-                    putLine("\t".$info['desc']);
-                    echo newLine();
+                    App::line($command.' '.$info['usage']);
+                    App::line("\t".$info['desc']);
+                    echo App::eol();
                 }
             }
             else{
-                putLine('Command not found');
+                App::line('Command not found');
             }
         }
         else{
             foreach($this->map as $command=>$info){
-                putLine($command.' '.$info['usage']);
+                App::line($command.' '.$info['usage']);
             }
         }
         return true;
@@ -662,7 +671,7 @@ class Actions {
         $command = $args[1];
 
         if(!$uri = App::m('Servers')->getUriFor($host)){
-            putLine('Host does not exist');
+            App::line('Host does not exist');
             return false;
         }
 
@@ -694,13 +703,13 @@ class Actions {
     }
 
     private function write_config($args){
-        file_put_contents($_SERVER['HOME'].'/.vzcontrol.conf', App::m('Servers')->getIni());
+        file_put_contents(App::$config_location, App::m('Servers')->getIni());
         return true;
     }
 
     private function show_config($args){
-        echo newLine();
-        putLine(App::m('Servers')->getIni());
+        echo App::eol();
+        App::line(App::m('Servers')->getIni());
         return true;
     }
 }

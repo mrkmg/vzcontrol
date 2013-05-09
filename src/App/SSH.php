@@ -28,12 +28,51 @@ class SSH {
     const COMMAND_FAILED=1;
     const SSH_FAILED=255;
 
+    public $socket_location = '/tmp/';
+
+    private $connections = array();
+
+    public function __construct($sl){
+        register_shutdown_function(array($this,'closeConnections'));
+        $this->socket_location = $sl;
+    }
+
+    public function closeConnections(){
+        foreach($this->connections as $uri=>$sl){
+            App::log('Closing persistant ssh connection for: '.$uri);
+            exec('ssh -O stop -S '.$sl.' '.$uri.' > /dev/null 2>&1');
+        }
+    }
+
+    private function getSocketLocation($uri){
+        $pattern = '/[^a-z0-9.]/i';
+        $replacement = '';
+        return $this->socket_location.'vzcs_'.preg_replace($pattern, $replacement, $uri, -1 );
+    }
+
+    private function getConnection($uri){
+        $sl = $this->getSocketLocation($uri);
+        if(!file_exists($sl)){
+            $this->makeConnection($uri);
+            $this->connections[$uri] = $sl;
+        }
+
+        return '-S '.$sl.' '.$uri;
+    }
+
+    private function makeConnection($uri){
+        App::log('Starting persistant ssh connection for: '.$uri);
+        exec('ssh '.$uri.' -o "ControlPersist=yes" -fNMS '.$this->getSocketLocation($uri).' > /dev/null 2>&1');
+        App::log('Persistant connection started for: '.$uri);
+    }
+
     public function run($uri,$command){
-        App::reader()->restoreStty();
         $command = 'ssh -q -t'
                  . ' -o ConnectTimeout=2 '
-                 . $uri
+                 . $this->getConnection($uri)
                  . ' "'.str_replace('"','\\"',$command).'"';
+        App::log('Running SSH Command: '.$command);
+        App::reader()->restoreStty();
         passthru($command,$return);
         App::reader()->setStty();
         return $return;
@@ -44,6 +83,7 @@ class SSH {
                  . ' -o ConnectTimeout=2 '
                  . $uri
                  . ' "'.str_replace('"','\\"',$command).'"';
+        App::log('Running SSH Command: '.$command);
         $output = shell_exec($command);
         return $output;
     }
