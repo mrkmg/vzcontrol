@@ -28,7 +28,7 @@ require 'Hoa/Console/Readline/Password.php';
 require 'App/App.php';
 require 'functions.php';
 
-define('VZC_VERSION','0.6.1');
+define('VZC_VERSION','0.6.2');
 
 $doMake = false;
 $config_file = false;
