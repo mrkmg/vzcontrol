@@ -1,4 +1,4 @@
-VZControl - v0.6.0
+VZControl - v0.6.1
 =========
 
 A CLI environment to monitor/administrate multiple OpenVZ Host machines and the containers on them. It is written in
@@ -171,7 +171,7 @@ You can also dynamically create this file via the vzcontrol command interface. F
     #                                    #
     # Created By MrKMG <kevin@mrkmg.com> #
     # Type `help` to start               #
-    #                             v0.5.2 #
+    #                             v0.6.1 #
     ######################################
 
     VZControl> removehost local
