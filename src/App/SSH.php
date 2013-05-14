@@ -81,7 +81,7 @@ class SSH {
     public function ret($uri,$command){
         $command = 'ssh -q '
                  . ' -o ConnectTimeout=2 '
-                 . $uri
+                 . $this->getConnection($uri)
                  . ' "'.str_replace('"','\\"',$command).'"';
         App::log('Running SSH Command: '.$command);
         $output = shell_exec($command);
