@@ -2,7 +2,7 @@
 
 /**
  * 
- * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>
+ * Copyright (c) 2012-2013 Kevin Gravier <kevin@mrkmg.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

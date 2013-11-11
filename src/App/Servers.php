@@ -2,7 +2,7 @@
 
 /**
  * 
- * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>
+ * Copyright (c) 2012-2013 Kevin Gravier <kevin@mrkmg.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -80,8 +80,8 @@ class Servers {
             $servers_wanted = exploder(' ',$list);
             foreach($servers_wanted as $server_name){
                 if(!isset($this->servers[$server_name])){
-                    putLine($server_name.' is not known');
-                    putLine('');
+                    App::line($server_name.' is not known');
+                    App::line('');
                     return false;
                 }
             }

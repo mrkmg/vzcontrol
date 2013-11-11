@@ -2,7 +2,7 @@
 
 /**
  * 
- * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>
+ * Copyright (c) 2012-2013 Kevin Gravier <kevin@mrkmg.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +23,6 @@
  *
  */
 
-
-function putLine($line){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    echo $line.newLine();
-    return true;
-}
-
-function newLine(){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    return PHP_EOL;
-}
 
 function autocompleterParse($pre,$cur){
     if(strlen($pre)){
@@ -75,88 +64,11 @@ function autocompleterParse($pre,$cur){
 
 }
 
-function getCtidFor($server_name){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    global $servers;
-
-    $ctid_raw = returnSSH($server_name,'vzlist -a -H -1');
-    $ctids = explode("\n",$ctid_raw);
-    array_walk($ctids,function(&$i){ return $i = trim($i); });
-    array_pop($ctids);
-    return $ctids;
+function exploder($d,$s){
+    $ar = explode($d,$s);
+    $ar = array_filter($ar,function($v){return !empty($v); });
+    return $ar;
 }
-
-function putHeader($header){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    putLine($header);
-    putLine(str_repeat('-', strlen($header)));
-    return true;
-}
-
-function runSSH($server_name,$command){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    global $servers;
-    global $reader;
-    if(!isset($servers[$server_name])) return false;
-    $reader->restoreStty();
-    $command = 'ssh -q -t'
-             . (isset($servers[$server_name]['port'])?' -p '.$servers[$server_name]['port']:'')
-             . ' -o ConnectTimeout=2 root@'
-             . $servers[$server_name]['host']
-             . ' "'.str_replace('"','\\"',$command).'"';
-    passthru($command,$return);
-    $reader->setStty();
-    return !$return;
-}
-
-function returnSSH($server_name,$command){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    global $servers;
-    if(!isset($servers[$server_name])) return false;
-    $command = 'ssh -q '
-             . (isset($servers[$server_name]['port'])?' -p '.$servers[$server_name]['port']:'')
-             . ' -o ConnectTimeout=2 root@'
-             . $servers[$server_name]['host']
-             . ' "'.str_replace('"','\\"',$command).'"';
-    $output = shell_exec($command);
-    return $output;
-}
-
-
-
-function get_templates_for_host($host){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    global $servers;
-
-    $templates = returnSSH($host,'ls /vz/template/cache | sed s/.tar.gz//');
-    $templates = explode("\n",$templates);
-
-    return $templates;
-}
-
-
-
-function get_wanted_servers($args){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    global $servers;
-    if(strlen($args)){
-        $servers_wanted = explode(' ',$args);
-        $servers_wanted = array_filter($servers_wanted,function($v){return !empty($v); });
-        foreach($servers_wanted as $server_name){
-            if(!isset($servers[$server_name])){
-                putLine($server_name.' is not known');
-                putLine('');
-                return false;
-            }
-        }
-    }
-    else{
-        $servers_wanted = array_keys($servers);
-    }
-    return $servers_wanted;
-}
-
-
 
 function getOnlinetemplates($args){
     App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
@@ -172,52 +84,14 @@ function getOnlinetemplates($args){
     return $file_list;
 }
 
-
-
-function exploder($d,$s){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    $ar = explode($d,$s);
-    $ar = array_filter($ar,function($v){return !empty($v); });
-    return $ar;
-}
-
-
-
-
-
-function showBanner(){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
-    $dims = App::m('Utils')->getScreenDimensions();
-    putLine(str_repeat('#', $dims[0]));
-    putLine('#'.str_repeat(' ', max(ceil(($dims[0]-11)/2),0)).'VzControl'.str_repeat(' ', max(floor(($dims[0]-11)/2),0)).'#');
-    putLine('#'.str_repeat(' ', max(ceil(($dims[0]-16)/2),0)).'OpenVZ Manager'.str_repeat(' ', max(floor(($dims[0]-16)/2),0)).'#');
-    putLine('#'.str_repeat(' ', $dims[0]-2).'#');
-    putLine('#'.str_repeat(' ', max(ceil(($dims[0]-36)/2),0)).'Created By MrKMG <kevin@mrkmg.com>'.str_repeat(' ', max(floor(($dims[0]-36)/2),0)).'#');
-    putLine('# Type `help` to start'.str_repeat(' ', $dims[0]-23).'#');
-    putLine('#'.str_repeat(' ', $dims[0]-9).'v0.5.2 #');
-    putLine(str_repeat('#', $dims[0]));
-
-
-    /*putLine('######################################');
-    putLine('#             VzControl              #');
-    putLine('#           OpenVZ Manager           #');
-    putLine('#                                    #');
-    putLine('# Created By MrKMG <kevin@mrkmg.com> #');
-    putLine('# Type `help` to start               #');
-    putLine('#                             v0.5.2 #');
-    putLine('######################################');
-    putLine('');*/
-}
-
 function writeInitialINIFile($location){
-    App::warn('FUNCTION '.__FUNCTION__.' should be removed.');
+    //App::warn('FUNCTION '.__FUNCTION__.' should be removed.'); Commented because this function is needed
     return file_put_contents($location,
 '; This is a VZControl configuration file
 
 [local]
-host = 127.0.0.1
-'
-);
+host = 127.0.0.1'
+    );
 }
 
 ?>

@@ -2,7 +2,7 @@
 <?php
 /**
  * 
- * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>
+ * Copyright (c) 2012-2013 Kevin Gravier <kevin@mrkmg.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,12 @@
  *
  */
 
+if(isset($argv[1]) && $argv[1] == 'uninstall'){
+	echo "Removing from /usr/bin".PHP_EOL;
+	exec('sudo rm /usr/bin/vzcontrol');
+	exit(0);
+}
+
 echo 'Building VzControl'.PHP_EOL;
 $srcRoot = "./src";
 $buildRoot = "./out";
@@ -41,7 +47,7 @@ rename($buildRoot.'/vzcontrol.phar',$buildRoot.'/vzcontrol');
 chmod($buildRoot.'/vzcontrol',0755);
 
 
-
+$force = false;
 if(isset($argv[1]) && $argv[1] == 'install'){
 	echo "Installing to /usr/bin/vzcontrol".PHP_EOL;
 	if(isset($argv[2]) && $argv[2] == 'force') $force = true;

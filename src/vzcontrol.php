@@ -1,7 +1,7 @@
 <?php
 /**
  * 
- * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>
+ * Copyright (c) 2012-2013 Kevin Gravier <kevin@mrkmg.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ Usage:
 -h   Show this help
 -c   Define a custom config (Defaults to ~/.vzcontrol.conf)
 -m   Make a default config file
--s   Temp Location for SSH Sockets (If set to same for multiple instances they we will share sockets)
+-s   Temp Location for SSH Sockets (If set to same for multiple instances they will share sockets)
 -v   Turn on verbose mode (Warnings only)
 -vv  Turn on verbose mode (Warnings and logs)
 
@@ -107,6 +107,11 @@ while(1){
     }
     if(!App::m('Actions')->run($command,$args))
         App::m('Actions')->run('help',$command);
+}
+
+
+function putLine($message){
+    echo $message.PHP_EOL;
 }
 
 ?>

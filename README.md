@@ -112,6 +112,12 @@ Change `;suhosin.executor.include.whitelist = ` to `suhosin.executor.include.whi
 Install php5 and mbstring
     yum install php-cli php-mbstring
 
+Edit the php.ini to allow phars to be built
+
+    nano /etc/php.ini
+
+    Set "phar.readonly = Off"
+
 
 Installation
 ------------

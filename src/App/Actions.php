@@ -2,7 +2,7 @@
 
 /**
  * 
- * Copyright (c) 2012 Kevin Gravier <kevin@mrkmg.com>
+ * Copyright (c) 2012-2013 Kevin Gravier <kevin@mrkmg.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -199,6 +199,16 @@ class Actions {
                 'func'=>'show_config',
                 'usage'=>'',
                 'desc'=>'Displays the VZControl config contents.'    
+            ),
+            'vbi'=>array(
+                'func'=>'verbose_up',
+                'usage'=>'',
+                'desc'=>'Increase Verbosity'
+            ),
+            'vbd'=>array(
+                'func'=>'verbose_down',
+                'usage'=>'',
+                'desc'=>'Decrease Verbosity'
             )
         );
 
@@ -710,6 +720,16 @@ class Actions {
     private function show_config($args){
         echo App::eol();
         App::line(App::m('Servers')->getIni());
+        return true;
+    }
+
+    private function verbose_up(){
+        App::$isVerbose = App::$isVerbose+1;
+        return true;
+    }
+
+    private function verbose_down(){
+        App::$isVerbose = App::$isVerbose-1;
         return true;
     }
 }
